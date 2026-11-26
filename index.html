@@ -5,105 +5,418 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CentroVivo — Inteligência urbana para Aracaju</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap">
-<!-- Leaflet CSS (OpenStreetMap / CartoDB gratuito) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style>
-:root{--navy:#0b2a63;--navy2:#0f3a85;--yellow:#ffc20e;--sky:#1aa3f5;--green:#3a9e4a;--bg:#f2f6fc;--card:#fff;--ink:#0b1b3a;--mute:#5b6b8a;--line:#dfe7f3;--soft:#eaf1fc;--red:#e5484d;--orange:#f08a24;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0a1429;--card:#111e3a;--ink:#e8eefb;--mute:#97a6c6;--line:#22335a;--soft:#17274a;--navy:#8fb4ff}}
-:root[data-theme="dark"]{--bg:#0a1429;--card:#111e3a;--ink:#e8eefb;--mute:#97a6c6;--line:#22335a;--soft:#17274a;--navy:#8fb4ff}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{
+  --navy:#0b2a63;
+  --navy-solid:#0b2a63;
+  --navy2:#0f3a85;
+  --yellow:#ffc20e;
+  --sky:#1aa3f5;
+  --green:#3a9e4a;
+  --bg:#f2f6fc;
+  --card:#ffffff;
+  --ink:#0b1b3a;
+  --mute:#5b6b8a;
+  --line:#dfe7f3;
+  --soft:#eaf1fc;
+  --red:#e5484d;
+  --orange:#f08a24;
+  --logo-building:#0b2a63;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0a1429;
+    --card:#111e3a;
+    --ink:#e8eefb;
+    --mute:#97a6c6;
+    --line:#22335a;
+    --soft:#17274a;
+    --navy:#8fb4ff;
+    --logo-building:#e8eefb;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0a1429;
+  --card:#111e3a;
+  --ink:#e8eefb;
+  --mute:#97a6c6;
+  --line:#22335a;
+  --soft:#17274a;
+  --navy:#8fb4ff;
+  --logo-building:#e8eefb;
+}
+
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;font-family:Poppins,system-ui,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#0b2a63;z-index:30}
+html{scroll-padding-top:calc(68px + env(safe-area-inset-top,0px))}
+body{
+  margin:0;
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  font-family:Poppins,system-ui,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  font-size:15px;
+  line-height:1.5;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0 0 auto;
+  height:env(safe-area-inset-top,0px);
+  background:var(--navy-solid);
+  z-index:1100;
+}
 button{font:inherit;cursor:pointer}
 a{color:inherit}
 :focus-visible{outline:3px solid var(--sky);outline-offset:2px}
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:1000;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:20px;padding:10px 24px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:22px;color:#0b2a63;white-space:nowrap}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo{color:#e8eefb}}
-:root[data-theme="dark"] .logo{color:#e8eefb}
+
+/* Cabeçalho */
+.top{
+  position:sticky;
+  top:env(safe-area-inset-top,0px);
+  z-index:1000;
+  background:var(--card);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:10px 24px;
+}
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  font-weight:800;
+  font-size:22px;
+  color:var(--logo-building);
+  white-space:nowrap;
+}
 .logo b{color:var(--yellow);font-weight:800}
-.logo small{display:block;font-size:9px;letter-spacing:.3em;font-weight:600;color:var(--mute);margin-top:-4px}
+.logo small{
+  display:block;
+  font-size:9px;
+  letter-spacing:.3em;
+  font-weight:600;
+  color:var(--mute);
+  margin-top:-4px;
+}
 nav{display:flex;gap:4px;margin-left:12px;flex:1;overflow-x:auto}
-nav a{text-decoration:none;padding:8px 14px;border-radius:999px;font-weight:500;color:var(--mute);white-space:nowrap}
+nav a{
+  text-decoration:none;
+  padding:8px 14px;
+  border-radius:999px;
+  font-weight:500;
+  color:var(--mute);
+  white-space:nowrap;
+  transition:background .15s,color .15s;
+}
+nav a:hover{color:var(--ink);background:var(--soft)}
 nav a.on{color:var(--navy);background:var(--soft);font-weight:600}
-.btn{border:0;border-radius:999px;padding:11px 22px;font-weight:700;display:inline-flex;gap:8px;align-items:center;text-decoration:none}
+
+/* Botões e controles */
+.btn{
+  border:0;
+  border-radius:999px;
+  padding:11px 22px;
+  font-weight:700;
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  transition:transform .12s,opacity .15s;
+}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
 .btn.y{background:var(--yellow);color:#0b2a63}
 .btn.o{background:transparent;color:#fff;border:2px solid #fff}
-.btn.n{background:#0b2a63;color:#fff}
+.btn.n{background:var(--navy-solid);color:#fff}
 .btn.s{padding:7px 14px;font-size:13px}
 .btn.g{background:var(--soft);color:var(--ink)}
-.ava{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--yellow),var(--orange));display:grid;place-items:center;font-weight:700;color:#0b2a63;border:0}
+.ava{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--yellow),var(--orange));
+  display:grid;
+  place-items:center;
+  font-weight:700;
+  color:#0b2a63;
+  border:0;
+  flex-shrink:0;
+}
+
+/* Estrutura principal */
 main{flex:1 0 auto;display:flex;flex-direction:column}
-.view{display:none}.view.on{display:flex;flex-direction:column;flex:1 0 auto}
-.hero{position:relative;overflow:hidden;background:linear-gradient(110deg,#0b2a63 0%,#0f3a85 55%,#1a5bb8 100%);color:#fff;padding:64px 24px 80px}
-.hero::after{content:"";position:absolute;left:-10%;right:-10%;bottom:-60px;height:120px;background:var(--yellow);transform:rotate(-2deg);opacity:.95}
-.hero-in{max-width:1180px;margin:auto;display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center;position:relative;z-index:1}
-.hero h1{font-size:clamp(30px,4.6vw,54px);line-height:1.1;margin:0 0 16px;font-weight:800}
-.hero h1 em{font-style:normal;color:var(--yellow);display:block}
-.hero p{font-size:18px;max-width:30ch;margin:0 0 26px;opacity:.95}
-.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
-.quick{background:var(--card);color:var(--ink);border-radius:20px;padding:22px;box-shadow:0 18px 40px rgba(0,0,0,.25);margin-top:-8px}
-.quick h3{margin:0 0 14px}
-.qg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.qg a{background:var(--soft);border-radius:14px;padding:16px 8px;text-align:center;text-decoration:none;font-weight:600;font-size:13px;color:var(--ink);position:relative}
-.qg a span{display:block;font-size:30px;margin-bottom:4px}
-.qg a .lock{display:block;font-size:10px;color:var(--mute);font-weight:500;margin-top:2px}
+.view{display:none}
+.view.on{display:flex;flex-direction:column;flex:1 0 auto}
 .wrap{max-width:1180px;width:100%;margin:0 auto;padding:32px 24px}
 .sec-h{display:flex;align-items:center;gap:12px;margin-bottom:6px}
-.sec-h .ic{width:44px;height:44px;border-radius:12px;background:var(--soft);display:grid;place-items:center;font-size:24px}
+.sec-h .ic{
+  width:44px;
+  height:44px;
+  border-radius:12px;
+  background:var(--soft);
+  display:grid;
+  place-items:center;
+  font-size:24px;
+  flex-shrink:0;
+}
 h2{margin:0;font-size:26px}
 .sub{color:var(--mute);margin:0 0 22px}
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:16px}
+
+/* Hero */
+.hero{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(110deg,#0b2a63 0%,#0f3a85 55%,#1a5bb8 100%);
+  color:#fff;
+  padding:64px 24px 80px;
+}
+.hero::after{
+  content:"";
+  position:absolute;
+  left:-10%;
+  right:-10%;
+  bottom:-60px;
+  height:120px;
+  background:var(--yellow);
+  transform:rotate(-2deg);
+  opacity:.95;
+}
+.hero-in{
+  max-width:1180px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  gap:32px;
+  align-items:center;
+  position:relative;
+  z-index:1;
+}
+.hero h1{font-size:clamp(30px,4.6vw,54px);line-height:1.1;margin:0 0 16px;font-weight:800}
+.hero h1 em{font-style:normal;color:var(--yellow);display:block}
+.hero p{font-size:18px;max-width:34ch;margin:0 0 26px;opacity:.95}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+.quick{
+  background:var(--card);
+  color:var(--ink);
+  border-radius:20px;
+  padding:22px;
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+  margin-top:-8px;
+}
+.quick h3{margin:0 0 14px}
+.qg{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.qg a{
+  background:var(--soft);
+  border-radius:14px;
+  padding:16px 8px;
+  text-align:center;
+  text-decoration:none;
+  font-weight:600;
+  font-size:13px;
+  color:var(--ink);
+  transition:transform .12s;
+}
+.qg a:hover{transform:translateY(-2px)}
+.qg a span{display:block;font-size:30px;margin-bottom:4px}
+.qg a .lock{display:block;font-size:10px;color:var(--mute);font-weight:500;margin-top:2px}
+
+/* Cards, Marketplace & Cupons */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.prod{display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s;cursor:pointer}
+.prod:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(11,42,99,.1)}
 .prod .img{height:130px;display:grid;place-items:center;font-size:54px}
-.prod .b{padding:12px 14px}
-.prod .p{font-weight:800;color:var(--navy)}
+.prod .b{padding:14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.prod .p{font-weight:800;color:var(--navy);font-size:17px;margin-top:auto}
 .prod .r{color:#f5a300;font-size:13px}
 .cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 14px;border-radius:999px;font-size:13px;font-weight:500}
-.chip.on{background:#0b2a63;color:#fff;border-color:#0b2a63}
-.search{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:12px 16px;border-radius:12px;margin-bottom:14px;font:inherit}
-.banner{background:linear-gradient(110deg,#0b2a63,#1a5bb8);color:#fff;border-radius:20px;padding:30px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:20px}
+.chip{
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--ink);
+  padding:7px 14px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:500;
+}
+.chip.on{background:var(--navy-solid);color:#fff;border-color:var(--navy-solid)}
+.search{
+  width:100%;
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--ink);
+  padding:12px 16px;
+  border-radius:12px;
+  margin-bottom:14px;
+  font:inherit;
+}
+.banner{
+  background:linear-gradient(110deg,#0b2a63,#1a5bb8);
+  color:#fff;
+  border-radius:20px;
+  padding:30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
 .banner .big{font-size:56px;font-weight:800;color:var(--yellow);line-height:1}
 .banner h3{font-size:26px;margin:0 0 10px}
 .cup{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-.cupom{border-radius:16px;padding:18px;color:#fff;display:flex;flex-direction:column;gap:6px;min-height:150px}
+.cupom{
+  border-radius:16px;
+  padding:18px;
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  min-height:160px;
+}
 .cupom .pc{font-size:34px;font-weight:800;line-height:1}
-.cupom code{background:rgba(255,255,255,.2);padding:4px 10px;border-radius:8px;align-self:flex-start;font-weight:700}
-.cupom button{margin-top:auto;align-self:flex-start;background:#fff;color:#0b2a63;border:0;border-radius:999px;padding:6px 14px;font-weight:700;font-size:13px}
+.cupom code{
+  background:rgba(255,255,255,.22);
+  padding:4px 10px;
+  border-radius:8px;
+  align-self:flex-start;
+  font-weight:700;
+}
+.cupom button{
+  margin-top:auto;
+  align-self:flex-start;
+  background:#fff;
+  color:#0b2a63;
+  border:0;
+  border-radius:999px;
+  padding:6px 14px;
+  font-weight:700;
+  font-size:13px;
+}
+
+/* Formulários e Ocorrências */
 .cols{display:grid;grid-template-columns:1.1fr 1fr;gap:20px}
 label{display:block;font-weight:600;font-size:13px;margin:12px 0 5px}
-input,select,textarea{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:11px 13px;border-radius:10px;font:inherit}
+input,select,textarea{
+  width:100%;
+  border:1px solid var(--line);
+  background:var(--card);
+  color:var(--ink);
+  padding:11px 13px;
+  border-radius:10px;
+  font:inherit;
+}
 .pad{padding:22px}
-.note{background:var(--soft);border-left:4px solid var(--yellow);padding:10px 14px;border-radius:8px;font-size:13px;color:var(--mute);margin-top:14px}
-.tag{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px}
-.t-an{background:#fff0cf;color:#8a5a00}.t-ab{background:#fde0e0;color:#a42a2e}.t-ok{background:#d9f3de;color:#1d6b2c}.t-en{background:#dbeafe;color:#1d4a9a}
+.note{
+  background:var(--soft);
+  border-left:4px solid var(--yellow);
+  padding:10px 14px;
+  border-radius:8px;
+  font-size:13px;
+  color:var(--mute);
+  margin-top:14px;
+}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.t-an{background:#fff0cf;color:#8a5a00}
+.t-ab{background:#fde0e0;color:#a42a2e}
+.t-ok{background:#d9f3de;color:#1d6b2c}
+.t-en{background:#dbeafe;color:#1d4a9a}
+
 .occ{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:flex-start}
 .occ:last-child{border:0}
-.occ .dot{font-size:22px}
-.occ h4{margin:0;font-size:15px}.occ small{color:var(--mute)}
-.map{position:relative;height:220px;border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#dbe8fa,#eef4fc);border:1px solid var(--line)}
-:root[data-theme="dark"] .map{background:linear-gradient(135deg,#17274a,#122042)}
-.pin{position:absolute;font-size:24px;transform:translate(-50%,-100%)}
-.dash{display:grid;grid-template-columns:240px 1fr;flex:1 0 auto}
-.side{background:#0b2a63;color:#fff;padding:18px 12px;display:flex;flex-direction:column;gap:4px}
-.side .role-badge{background:rgba(255,255,255,.1);padding:10px 14px;border-radius:12px;margin-bottom:12px;font-size:13px}
+.occ .dot{font-size:22px;flex-shrink:0}
+.occ h4{margin:0 0 2px;font-size:15px}
+.occ small{color:var(--mute)}
+.photo-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.photo-thumb{
+  width:56px;
+  height:56px;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid var(--line);
+  cursor:zoom-in;
+}
+.quick-places{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.place-pill{
+  border:1px dashed var(--line);
+  background:var(--soft);
+  color:var(--ink);
+  font-size:11.5px;
+  padding:4px 10px;
+  border-radius:999px;
+}
+.place-pill:hover{border-color:var(--sky)}
+
+/* Dashboard & Sidebar */
+.dash{display:grid;grid-template-columns:250px 1fr;flex:1 0 auto}
+.side{
+  background:var(--navy-solid);
+  color:#fff;
+  padding:18px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+.side .role-badge{
+  background:rgba(255,255,255,.1);
+  padding:12px 14px;
+  border-radius:12px;
+  margin-bottom:12px;
+  font-size:13px;
+}
 .side .role-badge b{display:block;color:var(--yellow);font-size:15px}
-.side a,.side button{display:flex;gap:10px;align-items:center;color:#cfdcf5;text-decoration:none;padding:11px 14px;border-radius:10px;font-weight:500;background:none;border:0;text-align:left;width:100%}
+.side a,.side button{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  color:#cfdcf5;
+  text-decoration:none;
+  padding:11px 14px;
+  border-radius:10px;
+  font-weight:500;
+  background:none;
+  border:0;
+  text-align:left;
+  width:100%;
+}
+.side a:hover{background:rgba(255,255,255,.08)}
 .side a.on{background:#1a5bb8;color:#fff;font-weight:700}
 .side .sp{flex:1}
-.dmain{padding:24px}
-.dhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+
+.dmain{padding:24px;min-width:0}
+.dhead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+}
 .dhead h2{font-size:24px}
 .dhead select{width:auto}
+
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:18px}
 .kpi{display:flex;gap:12px;align-items:center;padding:16px}
-.kpi .ic{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:22px;flex-shrink:0}
+.kpi .ic{
+  width:46px;
+  height:46px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  font-size:22px;
+  flex-shrink:0;
+}
 .kpi b{font-size:24px;display:block;line-height:1.1}
 .kpi span{color:var(--mute);font-size:12px}
 .kpi .delta{font-size:11px;font-weight:700;margin-top:2px;display:inline-block}
+
 .dcols{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px}
 .leg{list-style:none;padding:0;margin:10px 0 0;font-size:13px}
 .leg li{margin-bottom:12px}
@@ -111,62 +424,269 @@ input,select,textarea{width:100%;border:1px solid var(--line);background:var(--c
 .leg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
 .bar-bg{height:8px;background:var(--soft);border-radius:999px;overflow:hidden}
 .bar-fill{height:100%;border-radius:999px}
+
 .scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
-th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line)}
+th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
 th{color:var(--mute);font-weight:600;font-size:13px}
-.login{max-width:460px;margin:40px auto;text-align:center}
-.role-card{display:flex;align-items:center;gap:14px;text-align:left;padding:16px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);width:100%;margin-bottom:12px;transition:.15s}
+
+/* Login */
+.login{max-width:480px;margin:32px auto;text-align:center}
+.role-card{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  text-align:left;
+  padding:16px;
+  border:2px solid var(--line);
+  border-radius:14px;
+  background:var(--card);
+  color:var(--ink);
+  width:100%;
+  margin-bottom:12px;
+  transition:.15s;
+}
 .role-card:hover{border-color:var(--sky);background:var(--soft)}
-.role-card .ric{font-size:28px;width:48px;height:48px;border-radius:12px;background:var(--soft);display:grid;place-items:center}
+.role-card .ric{
+  font-size:28px;
+  width:48px;
+  height:48px;
+  border-radius:12px;
+  background:var(--soft);
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+}
 .role-card b{display:block;font-size:16px}
 .role-card small{color:var(--mute);font-size:12px}
-.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#0b2a63;color:#fff;padding:12px 20px;border-radius:12px;font-weight:600;display:none;z-index:2000;max-width:90vw}
-.ods{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+
+.ods{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .ods div{border-radius:12px;padding:14px;color:#fff;font-weight:700;font-size:13px}
 .ods b{font-size:28px;display:block}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 
-/* Estilos do Mapa de Calor Leaflet */
+/* Mapa de Calor Leaflet */
 #leafletHeatMap{width:100%;height:420px;border-radius:14px;border:1px solid var(--line);z-index:1;background:#e8eef8}
+#clientLeafletMap{width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-bottom:14px;z-index:1;background:#e8eef8}
 .heat-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .heat-legend{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--mute);margin-top:10px;flex-wrap:wrap}
 .heat-grad{width:140px;height:10px;border-radius:999px;background:linear-gradient(90deg,#1aa3f5,#3a9e4a,#ffc20e,#f08a24,#e5484d)}
-.leaflet-popup-content-wrapper{border-radius:12px;font-family:Poppins,sans-serif}
+.leaflet-popup-content-wrapper{border-radius:12px;font-family:Poppins,sans-serif;color:#0b1b3a}
 
-footer{background:#0b2a63;color:#cfdcf5;padding:26px 24px;text-align:center;font-size:14px;margin-top:auto;flex-shrink:0;width:100%}
-
-/* Estilos CentroCoins */
-.coin-hero{background:linear-gradient(120deg,#0b2a63 0%,#1a5bb8 70%,#256ee0 100%);color:#fff;border-radius:18px;padding:22px 24px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:18px;box-shadow:0 10px 26px rgba(11,42,99,.18)}
+/* CentroCoins */
+.coin-hero{
+  background:linear-gradient(120deg,#0b2a63 0%,#1a5bb8 70%,#256ee0 100%);
+  color:#fff;
+  border-radius:18px;
+  padding:22px 24px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:16px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+  box-shadow:0 10px 26px rgba(11,42,99,.18);
+}
 .coin-val{font-size:38px;font-weight:800;color:var(--yellow);line-height:1.05;display:flex;align-items:center;gap:10px}
-.coin-pill{display:inline-flex;align-items:center;gap:5px;background:rgba(255,194,14,.18);color:#8a5a00;border:1px solid rgba(255,194,14,.55);padding:3px 10px;border-radius:999px;font-size:11.5px;font-weight:700}
+.coin-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:rgba(255,194,14,.18);
+  color:#8a5a00;
+  border:1px solid rgba(255,194,14,.55);
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:11.5px;
+  font-weight:700;
+}
 :root[data-theme="dark"] .coin-pill{color:#ffd866;background:rgba(255,194,14,.14)}
 .reward-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-bottom:18px}
-.reward-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
-.reward-cost{display:inline-flex;align-items:center;gap:5px;background:var(--soft);color:var(--navy);font-weight:800;font-size:13px;padding:4px 10px;border-radius:999px;align-self:flex-start}
+.reward-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:16px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.reward-cost{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:var(--soft);
+  color:var(--navy);
+  font-weight:800;
+  font-size:13px;
+  padding:4px 10px;
+  border-radius:999px;
+  align-self:flex-start;
+}
 
-
-/* Responsividade completa para todas as abas de Lojista e Órgão Público */
 .sac-resp-box{display:flex;gap:8px;align-items:center}
 .sac-resp-box input{min-width:170px;flex:1}
 
+/* Modal */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(7,18,42,.6);
+  backdrop-filter:blur(2px);
+  z-index:2600;
+  display:grid;
+  place-items:center;
+  padding:16px;
+}
+.modal-backdrop[hidden]{display:none}
+.modal-box{
+  background:var(--card);
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:20px;
+  max-width:460px;
+  width:100%;
+  padding:22px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.modal-head h3{margin:0;font-size:19px}
+.stars-row{display:flex;gap:8px;margin:10px 0}
+.star-btn{
+  font-size:28px;
+  background:var(--soft);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:6px 12px;
+  line-height:1;
+}
+.star-btn.on{background:#fff0cf;border-color:var(--yellow)}
+
+/* Toast e Rodapé */
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:calc(20px + env(safe-area-inset-bottom,0px));
+  transform:translateX(-50%);
+  background:var(--navy-solid);
+  color:#fff;
+  padding:12px 20px;
+  border-radius:12px;
+  font-weight:600;
+  display:none;
+  z-index:2800;
+  max-width:90vw;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+footer{
+  background:var(--navy-solid);
+  color:#cfdcf5;
+  padding:26px 24px calc(26px + env(safe-area-inset-bottom,0px));
+  text-align:center;
+  font-size:14px;
+  margin-top:auto;
+  flex-shrink:0;
+  width:100%;
+}
+
+/* Menu Mobile (Drawer) */
+.burger{
+  display:none;
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--soft);
+  color:var(--ink);
+  font-size:19px;
+  line-height:1;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+.drawer-backdrop{position:fixed;inset:0;background:rgba(7,18,42,.52);backdrop-filter:blur(2px);z-index:2400}
+.drawer-backdrop[hidden]{display:none}
+.mobile-drawer{
+  position:fixed;
+  top:0;
+  left:0;
+  bottom:0;
+  width:min(310px,84vw);
+  background:var(--card);
+  color:var(--ink);
+  border-right:1px solid var(--line);
+  box-shadow:12px 0 36px rgba(0,0,0,.22);
+  z-index:2500;
+  display:flex;
+  flex-direction:column;
+  transform:translateX(-100%);
+  transition:transform .24s cubic-bezier(.22,1,.36,1);
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+.mobile-drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.drawer-title{font-weight:800;font-size:19px;color:var(--navy)}
+.drawer-title b{color:var(--yellow)}
+.drawer-close{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-size:15px;display:grid;place-items:center}
+.drawer-body{padding:14px 16px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;flex:1}
+.drawer-body a,.drawer-body button.d-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  padding:11px 14px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:500;
+  font-size:14px;
+  color:var(--ink);
+  background:none;
+  border:0;
+  text-align:left;
+}
+.drawer-body a.on,.drawer-body button.d-item.on{background:var(--soft);color:var(--navy);font-weight:700}
+.drawer-sep{height:1px;background:var(--line);margin:8px 0}
+.drawer-role-box{background:var(--soft);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--mute);margin-bottom:6px}
+.drawer-role-box b{display:block;color:var(--navy);font-size:14px}
+
+/* Responsividade Unificada */
 @media (max-width:860px){
+  html,body{overflow-x:clip}
+  .top{padding:10px 14px;gap:8px;flex-wrap:nowrap}
+  .top>nav{display:none}
+  .burger{display:inline-flex}
+  .logo{font-size:18px;gap:8px;min-width:0}
+  .logo svg{width:34px;height:31px;flex-shrink:0}
+  .logo span{overflow:hidden;text-overflow:ellipsis}
+  #loginBtn{padding:7px 12px;font-size:12px;white-space:nowrap;flex-shrink:0;margin-left:auto}
+  .ava{width:34px;height:34px;font-size:14px;flex-shrink:0}
+  .hero{padding:36px 16px 64px}
+  .hero-in,.cols,.dcols,.form-row{grid-template-columns:1fr;gap:18px}
+  .wrap{padding:24px 16px}
+  .dash{grid-template-columns:1fr;flex:1 0 auto}
+  .side{display:none}
+  .dmain{padding:16px}
   .dmain .card.pad{padding:14px}
   .dmain .card.pad.scroll{padding:10px}
   .dmain h2{font-size:20px;line-height:1.2}
   .dmain h3{font-size:17px}
-  .dmain .cats{gap:6px;margin-bottom:12px}
-  .dmain .chip{padding:6px 11px;font-size:12px}
-  .dmain table{min-width:0;width:100%;font-size:12.5px}
-  .dmain th,.dmain td{padding:8px 6px;vertical-align:top}
-  .dmain select,.dmain input{padding:8px 10px;font-size:13px}
+  .dhead{flex-direction:column;align-items:flex-start}
+  .dhead select,.dhead .btn{width:100%;justify-content:center}
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
+  .kpi{padding:12px}
+  .kpi b{font-size:20px}
+  .banner{padding:20px}
+  .banner .big{font-size:42px}
+  .banner h3{font-size:20px}
   .sac-resp-box{flex-direction:column;align-items:stretch;gap:6px}
   .sac-resp-box input{min-width:0;width:100%}
   .sac-resp-box .btn{width:100%;justify-content:center}
   .heat-toolbar{flex-direction:column;align-items:flex-start;gap:8px}
   .heat-legend{gap:6px;font-size:11px}
   .heat-grad{width:90px}
-  #leafletHeatMap{height:270px !important}
+  #clientLeafletMap{height:230px}
+  #leafletHeatMap{height:280px !important}
 }
 
 @media (max-width:540px){
@@ -178,72 +698,27 @@ footer{background:#0b2a63;color:#cfdcf5;padding:26px 24px;text-align:center;font
   .dmain td:empty{display:none}
 }
 
-
-/* Botão Hambúrguer e Drawer Menu (apenas dispositivos móveis <= 860px) */
-.burger{display:none;width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-size:19px;line-height:1;align-items:center;justify-content:center;flex-shrink:0}
-.drawer-backdrop{position:fixed;inset:0;background:rgba(7,18,42,.52);backdrop-filter:blur(2px);z-index:2400}
-.mobile-drawer{position:fixed;top:0;left:0;bottom:0;width:min(310px,84vw);background:var(--card);color:var(--ink);border-right:1px solid var(--line);box-shadow:12px 0 36px rgba(0,0,0,.22);z-index:2500;display:flex;flex-direction:column;transform:translateX(-100%);transition:transform .24s cubic-bezier(.22,1,.36,1);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-.mobile-drawer.open{transform:translateX(0)}
-.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
-.drawer-title{font-weight:800;font-size:19px;color:var(--navy)}
-.drawer-title b{color:var(--yellow)}
-.drawer-close{width:34px;height:34px;border-radius:999px;border:1px solid var(--line);background:var(--soft);color:var(--ink);font-size:15px;display:grid;place-items:center}
-.drawer-body{padding:14px 16px;display:flex;flex-direction:column;gap:6px;overflow-y:auto;flex:1}
-.drawer-body a,.drawer-body button.d-item{display:flex;align-items:center;gap:10px;width:100%;padding:11px 14px;border-radius:12px;text-decoration:none;font-weight:500;font-size:14px;color:var(--ink);background:none;border:0;text-align:left}
-.drawer-body a.on,.drawer-body button.d-item.on{background:var(--soft);color:var(--navy);font-weight:700}
-.drawer-sep{height:1px;background:var(--line);margin:8px 0}
-.drawer-role-box{background:var(--soft);border-radius:12px;padding:10px 12px;font-size:12px;color:var(--mute);margin-bottom:6px}
-.drawer-role-box b{display:block;color:var(--navy);font-size:14px}
-
-@media (max-width:860px){
-  html,body{overflow-x:clip}
-  .top{padding:10px 14px;gap:8px;flex-wrap:nowrap}
-  .top>nav{display:none}
-  .burger{display:inline-flex}
-  .logo{font-size:18px;gap:8px;min-width:0}
-  .logo svg{width:34px;height:31px;flex-shrink:0}
-  .logo span{overflow:hidden;text-overflow:ellipsis}
-  #loginBtn{padding:7px 12px;font-size:12px;white-space:nowrap;flex-shrink:0}
-  .ava{width:34px;height:34px;font-size:14px;flex-shrink:0}
-  .hero{padding:36px 16px 64px}
-  .hero-in,.cols,.dcols,.form-row{grid-template-columns:1fr;gap:18px}
-  .wrap{padding:24px 16px}
-  .dash{grid-template-columns:1fr;flex:1 0 auto}
-  .side{display:none}
-  .dmain{padding:16px}
-  .dhead{flex-direction:column;align-items:flex-start}
-  .dhead select,.dhead .btn{width:100%;justify-content:center}
-  .kpis{grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px}
-  .kpi{padding:12px}
-  .kpi b{font-size:20px}
-  .banner{padding:20px}
-  .banner .big{font-size:42px}
-  .banner h3{font-size:20px}
-  #clientLeafletMap{height:230px}
-  #leafletHeatMap{height:300px}
+@media (prefers-reduced-motion:no-preference){
+  .hero h1{animation:in .7s ease both}
+  @keyframes in{from{opacity:0;transform:translateY(14px)}}
 }
-
-@media (max-width:860px){
-.hero-in,.cols,.dcols,.form-row{grid-template-columns:1fr}
-.top{padding:10px 14px;gap:8px;flex-wrap:wrap}
-nav{order:3;flex-basis:100%;margin:0}
-.dash{grid-template-columns:1fr}
-.side{flex-direction:row;overflow-x:auto;padding:8px}
-.side .role-badge,.side .sp{display:none}
-.side a,.side button{width:auto;white-space:nowrap;padding:9px 12px}
-}
-@media (prefers-reduced-motion:no-preference){.hero h1{animation:in .7s ease both}@keyframes in{from{opacity:0;transform:translateY(14px)}}}
 </style>
 </head>
 <body>
 <header class="top">
   <a class="logo" href="#inicio" aria-label="CentroVivo, início">
-    <svg width="44" height="40" viewBox="0 0 44 40" aria-hidden="true"><circle cx="20" cy="18" r="15" fill="none" stroke="#ffc20e" stroke-width="4"/><path d="M6 28V16h5v-4h4v16zM17 28V14l3-4 3 4v14zM26 28V12h4v16z" fill="#0b2a63"/><path d="M2 36c10-10 24-10 36-4-14-2-24 0-36 4z" fill="#1aa3f5"/><path d="M12 33c6-8 12-12 20-14-6 6-10 10-20 14z" fill="#ffc20e"/><path d="M36 22c6-2 8 4 4 8-4 0-6-4-4-8z" fill="#3a9e4a"/></svg>
+    <svg width="44" height="40" viewBox="0 0 44 40" aria-hidden="true">
+      <circle cx="20" cy="18" r="15" fill="none" stroke="#ffc20e" stroke-width="4"/>
+      <path d="M6 28V16h5v-4h4v16zM17 28V14l3-4 3 4v14zM26 28V12h4v16z" fill="var(--logo-building)"/>
+      <path d="M2 36c10-10 24-10 36-4-14-2-24 0-36 4z" fill="#1aa3f5"/>
+      <path d="M12 33c6-8 12-12 20-14-6 6-10 10-20 14z" fill="#ffc20e"/>
+      <path d="M36 22c6-2 8 4 4 8-4 0-6-4-4-8z" fill="#3a9e4a"/>
+    </svg>
     <span>Centro<b>Vivo</b><small>INTELIGÊNCIA URBANA</small></span>
   </a>
-  <nav id="nav"></nav>
+  <nav id="nav" aria-label="Navegação principal"></nav>
   <a class="btn n s" href="#entrar" id="loginBtn">Entrar</a>
-  <button class="ava" id="themeBtn" aria-label="Alternar tema claro e escuro" title="Alternar tema">◐</button>
+  <button class="ava" id="themeBtn" type="button" aria-label="Alternar tema claro e escuro" title="Alternar tema">◐</button>
   <button class="burger" id="burgerBtn" type="button" aria-label="Abrir menu de navegação" aria-expanded="false" aria-controls="mobileDrawer">☰</button>
 </header>
 
@@ -256,340 +731,276 @@ nav{order:3;flex-basis:100%;margin:0}
   <div class="drawer-body" id="drawerBody"></div>
 </aside>
 
-<main>
-<!-- INÍCIO -->
-<section class="view" id="v-inicio">
-  <div class="hero"><div class="hero-in">
-    <div>
-      <h1>Um Centro melhor <em>para todos!</em></h1>
-      <p>Compre, economize, reclame e participe da transformação do Centro de Aracaju.</p>
-      <div class="cta"><a class="btn y" href="#lojas">🛍 Explorar lojas</a><a class="btn o" href="#reclame">Reportar um problema</a></div>
+<div class="modal-backdrop" id="modalBackdrop" hidden>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h3 id="modalTitle">Detalhes</h3>
+      <button class="drawer-close" id="modalClose" type="button" aria-label="Fechar janela">✕</button>
     </div>
-    <div class="quick">
-      <h3>Acesso rápido</h3>
-      <div class="qg" id="quickGrid">
-        <a href="#lojas"><span>🛍️</span>Marketplace</a>
-        <a href="#entrar" id="quickDiscountLink"><span>🏷️</span>Descontos<small class="lock">Exclusivo p/ Clientes</small></a>
-        <a href="#reclame"><span>📣</span>Reclame Aqui</a>
-        <a href="#entrar"><span>🔐</span>Área do Usuário</a>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<main>
+  <!-- INÍCIO -->
+  <section class="view" id="v-inicio">
+    <div class="hero"><div class="hero-in">
+      <div>
+        <h1>Um Centro melhor <em>para todos!</em></h1>
+        <p>Compre, economize, reclame e participe da transformação do Centro de Aracaju.</p>
+        <div class="cta">
+          <a class="btn y" href="#lojas">🛍 Explorar lojas</a>
+          <a class="btn o" href="#reclame">Reportar um problema</a>
+        </div>
+      </div>
+      <div class="quick">
+        <h3>Acesso rápido</h3>
+        <div class="qg" id="quickGrid">
+          <a href="#lojas"><span>🛍️</span>Marketplace</a>
+          <a href="#entrar" id="quickDiscountLink"><span>🏷️</span>Descontos<small class="lock">Exclusivo p/ Clientes</small></a>
+          <a href="#reclame"><span>📣</span>Reclame Aqui</a>
+          <a href="#entrar" id="quickUserLink"><span>🔐</span>Área do Usuário</a>
+        </div>
+      </div>
+    </div></div>
+
+    <div class="wrap">
+      <div class="sec-h"><div class="ic">🧭</div><h2>Como funciona a reclamação</h2></div>
+      <p class="sub">Cinco passos, do registro até a sua avaliação e recompensa cidadã.</p>
+      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+        <div class="card pad"><b>1. Registro</b><br><small>Descreva o problema, informe local e categoria e anexe fotos.</small></div>
+        <div class="card pad"><b>2. Protocolo</b><br><small>Cada manifestação recebe um número para consulta.</small></div>
+        <div class="card pad"><b>3. Encaminhamento</b><br><small>A plataforma envia ao estabelecimento ou órgão responsável.</small></div>
+        <div class="card pad"><b>4. Resposta e Coins</b><br><small>O responsável atualiza o status e demandas urbanas validadas geram CentroCoins.</small></div>
+        <div class="card pad"><b>5. Avaliação</b><br><small>Você diz se o problema foi resolvido e avalia o atendimento.</small></div>
+      </div>
+      <div class="note">O módulo não substitui os canais oficiais de emergência, órgãos públicos ou Procon. Ele organiza manifestações e facilita o acompanhamento.</div>
+
+      <div class="sec-h" style="margin-top:34px"><div class="ic">🌱</div><h2>Impacto e ODS</h2></div>
+      <p class="sub">Contribuindo para uma Aracaju mais justa, conectada e sustentável.</p>
+      <div class="ods">
+        <div style="background:#a21942"><b>8</b>Trabalho decente e crescimento</div>
+        <div style="background:#f36d25"><b>9</b>Indústria e inovação</div>
+        <div style="background:#f99d26"><b>11</b>Cidades sustentáveis</div>
+        <div style="background:#00689d"><b>16</b>Paz, justiça e instituições</div>
+        <div style="background:#19486a"><b>17</b>Parcerias e meios</div>
       </div>
     </div>
-  </div></div>
-  <div class="wrap">
-    <div class="sec-h"><div class="ic">🧭</div><h2>Como funciona a reclamação</h2></div>
-    <p class="sub">Cinco passos, do registro até a sua avaliação.</p>
-    <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
-      <div class="card pad"><b>1. Registro</b><br><small>Descreva o problema, informe local e categoria e anexe fotos.</small></div>
-      <div class="card pad"><b>2. Protocolo</b><br><small>Cada manifestação recebe um número para consulta.</small></div>
-      <div class="card pad"><b>3. Encaminhamento</b><br><small>A plataforma envia ao estabelecimento ou órgão responsável.</small></div>
-      <div class="card pad"><b>4. Resposta</b><br><small>O responsável registra a resposta e atualiza o andamento.</small></div>
-      <div class="card pad"><b>5. Avaliação</b><br><small>Você diz se o problema foi resolvido e avalia o atendimento.</small></div>
+  </section>
+
+  <!-- LOJAS -->
+  <section class="view" id="v-lojas"><div class="wrap">
+    <div class="sec-h"><div class="ic">🏪</div><h2>Marketplace do Centro</h2></div>
+    <p class="sub">Compre no Centro e fortaleça o comércio local. Clique em um produto para simular desconto com seus cupons.</p>
+    <input class="search" id="q" type="search" placeholder="Buscar lojas e produtos" aria-label="Buscar lojas e produtos">
+    <div class="cats" id="cats"></div>
+    <div class="cards" id="prods"></div>
+  </div></section>
+
+  <!-- DESCONTOS (EXCLUSIVO CLIENTE / CIDADÃO) -->
+  <section class="view" id="v-descontos"><div class="wrap">
+    <div class="sec-h"><div class="ic">🏷️</div><h2>Clube de Descontos do Cliente</h2></div>
+    <p class="sub">Benefício exclusivo da sua conta de Cidadão. Salve o cupom e apresente nas lojas participantes.</p>
+    <div class="banner">
+      <div><div style="opacity:.9">Até</div><div class="big">70%</div><div>de desconto</div></div>
+      <div><h3>Compre mais, pague menos!</h3><a class="btn y" href="#dashboard" id="goMyCoupons">Ver meus cupons salvos</a></div>
     </div>
-    <div class="note">O módulo não substitui os canais oficiais de emergência, órgãos públicos ou Procon. Ele organiza manifestações e facilita o acompanhamento.</div>
-    <div class="sec-h" style="margin-top:34px"><div class="ic">🌱</div><h2>Impacto e ODS</h2></div>
-    <p class="sub">Contribuindo para uma Aracaju mais justa, conectada e sustentável.</p>
-    <div class="ods">
-      <div style="background:#a21942"><b>8</b>Trabalho decente e crescimento</div>
-      <div style="background:#f36d25"><b>9</b>Indústria e inovação</div>
-      <div style="background:#f99d26"><b>11</b>Cidades sustentáveis</div>
-      <div style="background:#00689d"><b>16</b>Paz, justiça e instituições</div>
-      <div style="background:#19486a"><b>17</b>Parcerias e meios</div>
+    <div class="cup" id="cups"></div>
+  </div></section>
+
+  <!-- RECLAME -->
+  <section class="view" id="v-reclame"><div class="wrap">
+    <div class="sec-h"><div class="ic">⚠️</div><h2>Reclame Aqui do Centro</h2></div>
+    <p class="sub">Registre ocorrências urbanas ou reclamações sobre estabelecimentos comerciais.</p>
+    <div class="cols">
+      <div class="card pad">
+        <h3 style="margin:0">Nova manifestação</h3>
+        <form onsubmit="return false" id="rf" style="all:unset;display:block">
+          <label for="rt">Título</label>
+          <input id="rt" placeholder="Ex.: Buraco na via ou Atendimento na loja">
+
+          <label for="rc">Categoria (Define o destinatário)</label>
+          <select id="rc">
+            <option value="Via e calçada">Via e calçada (Órgão Público)</option>
+            <option value="Iluminação">Iluminação pública (Órgão Público)</option>
+            <option value="Limpeza urbana">Limpeza urbana (Órgão Público)</option>
+            <option value="Segurança">Segurança (Órgão Público)</option>
+            <option value="Comércio e atendimento">Comércio e atendimento (Lojista)</option>
+          </select>
+
+          <label for="rl">Local ou Nome da Loja</label>
+          <input id="rl" placeholder="Rua, número, praça ou nome do estabelecimento">
+          <div class="quick-places" id="quickPlaces" aria-label="Locais frequentes do Centro">
+            <button type="button" class="place-pill" data-place="Rua João Pessoa, 320" data-lat="-10.9118" data-lng="-37.0512">📍 Rua João Pessoa</button>
+            <button type="button" class="place-pill" data-place="Praça Fausto Cardoso" data-lat="-10.9136" data-lng="-37.0485">📍 Praça Fausto Cardoso</button>
+            <button type="button" class="place-pill" data-place="Mercado Antônio Franco" data-lat="-10.9085" data-lng="-37.0488">📍 Mercado Central</button>
+            <button type="button" class="place-pill" data-place="Calçados Centro" data-lat="-10.9115" data-lng="-37.0505">🏪 Calçados Centro</button>
+          </div>
+
+          <label for="rd">Descreva o problema</label>
+          <textarea id="rd" rows="4" placeholder="Conte-nos o que aconteceu"></textarea>
+
+          <label for="rp">Fotos (opcional, até 3 imagens)</label>
+          <input id="rp" type="file" accept="image/*" multiple>
+          <div class="photo-strip" id="rpPreview"></div>
+
+          <div style="margin-top:16px">
+            <button class="btn n" type="button" id="send">Registrar manifestação</button>
+          </div>
+        </form>
+        <div class="note">Em emergências, ligue 190, 192 ou 193. Esta plataforma não substitui os canais oficiais nem o Procon.</div>
+      </div>
+
+      <div class="card pad">
+        <div class="cats" id="rtabs">
+          <button class="chip on" data-f="all">Todas</button>
+          <button class="chip" data-f="Aberta">Abertas</button>
+          <button class="chip" data-f="Em análise">Em análise</button>
+          <button class="chip" data-f="Resolvida">Resolvidas</button>
+        </div>
+        <div id="clientLeafletMap"></div>
+        <div id="occs"></div>
+      </div>
     </div>
-  </div>
-</section>
+  </div></section>
 
-<!-- LOJAS -->
-<section class="view" id="v-lojas"><div class="wrap">
-  <div class="sec-h"><div class="ic">🏪</div><h2>Marketplace do Centro</h2></div>
-  <p class="sub">Compre no Centro e fortaleça o comércio local.</p>
-  <input class="search" id="q" type="search" placeholder="Buscar lojas e produtos" aria-label="Buscar lojas e produtos">
-  <div class="cats" id="cats"></div>
-  <div class="cards" id="prods"></div>
-</div></section>
+  <!-- ENTRAR (SELEÇÃO DE PERFIL) -->
+  <section class="view" id="v-entrar"><div class="wrap"><div class="login card pad">
+    <h2>Selecione seu perfil</h2>
+    <p class="sub">Cada tipo de usuário acessa telas e ferramentas exclusivas</p>
 
-<!-- DESCONTOS (EXCLUSIVO CLIENTE / CIDADÃO) -->
-<section class="view" id="v-descontos"><div class="wrap">
-  <div class="sec-h"><div class="ic">🏷️</div><h2>Clube de Descontos do Cliente</h2></div>
-  <p class="sub">Benefício exclusivo da sua conta de Cidadão. Salve o cupom e apresente nas lojas participantes.</p>
-  <div class="banner"><div><div style="opacity:.9">Até</div><div class="big">70%</div><div>de desconto</div></div><div><h3>Compre mais, pague menos!</h3><a class="btn y" href="#dashboard" id="goMyCoupons">Ver meus cupons salvos</a></div></div>
-  <div class="cup" id="cups"></div>
-</div></section>
+    <button class="role-card" type="button" data-role="cidadao">
+      <div class="ric">👤</div>
+      <div><b>Cidadão / Cliente</b><small>Acessar Clube de Descontos, CentroCoins, explorar lojas, abrir e avaliar reclamações.</small></div>
+    </button>
 
-<!-- RECLAME -->
-<section class="view" id="v-reclame"><div class="wrap">
-  <div class="sec-h"><div class="ic">⚠️</div><h2>Reclame Aqui do Centro</h2></div>
-  <p class="sub">Registre ocorrências urbanas ou reclamações sobre estabelecimentos comerciais.</p>
-  <div class="cols">
-    <div class="card pad">
-      <h3 style="margin:0">Nova manifestação</h3>
-      <form onsubmit="return false" id="rf" style="all:unset;display:block">
-        <label for="rt">Título</label><input id="rt" placeholder="Ex.: Buraco na via ou Atendimento na loja">
-        <label for="rc">Categoria (Define o destinatário)</label>
-        <select id="rc">
-          <option value="Via e calçada">Via e calçada (Órgão Público)</option>
-          <option value="Iluminação">Iluminação pública (Órgão Público)</option>
-          <option value="Limpeza urbana">Limpeza urbana (Órgão Público)</option>
-          <option value="Segurança">Segurança (Órgão Público)</option>
-          <option value="Comércio e atendimento">Comércio e atendimento (Lojista)</option>
-        </select>
-        <label for="rl">Local ou Nome da Loja</label><input id="rl" placeholder="Rua, número, praça ou nome do estabelecimento">
-        <label for="rd">Descreva o problema</label><textarea id="rd" rows="4" placeholder="Conte-nos o que aconteceu"></textarea>
-        <label for="rp">Fotos (opcional)</label><input id="rp" type="file" accept="image/*" multiple>
-        <div style="margin-top:16px"><button class="btn n" type="button" id="send">Registrar manifestação</button></div>
-      </form>
-      <div class="note">Em emergências, ligue 190, 192 ou 193. Esta plataforma não substitui os canais oficiais nem o Procon.</div>
+    <button class="role-card" type="button" data-role="lojista">
+      <div class="ric">🏪</div>
+      <div><b>Lojista / Comerciante</b><small>Gerenciar catálogo da sua loja, criar cupons promocionais e responder clientes.</small></div>
+    </button>
+
+    <button class="role-card" type="button" data-role="orgao">
+      <div class="ric">🏛</div>
+      <div><b>Órgão Público / Prefeitura</b><small>Dashboard de zeladoria urbana, mapa de calor em tempo real e validação de protocolos.</small></div>
+    </button>
+
+    <div class="note">
+      Os dados do protótipo ficam salvos automaticamente neste navegador.
+      <div style="margin-top:10px">
+        <button type="button" class="btn g s" id="resetDemoBtn">↻ Restaurar dados iniciais de demonstração</button>
+      </div>
     </div>
-    <div class="card pad">
-      <div class="cats" id="rtabs"><button class="chip on" data-f="all">Todas</button><button class="chip" data-f="Aberta">Abertas</button><button class="chip" data-f="Em análise">Em análise</button><button class="chip" data-f="Resolvida">Resolvidas</button></div>
-      <div id="clientLeafletMap" style="width:100%;height:260px;border-radius:14px;border:1px solid var(--line);margin-bottom:14px;z-index:1;background:#e8eef8"></div>
-      <div id="occs"></div>
+  </div></div></section>
+
+  <!-- DASHBOARD DINÂMICO POR PERFIL -->
+  <section class="view" id="v-dashboard">
+    <div class="dash">
+      <aside class="side" id="side"></aside>
+      <div class="dmain" id="dmain"></div>
     </div>
-  </div>
-</div></section>
-
-<!-- ENTRAR (SELEÇÃO DE PERFIL) -->
-<section class="view" id="v-entrar"><div class="wrap"><div class="login card pad">
-  <h2>Selecione seu perfil</h2>
-  <p class="sub">Cada tipo de usuário acessa telas e ferramentas exclusivas</p>
-  
-  <button class="role-card" data-role="cidadao">
-    <div class="ric">👤</div>
-    <div><b>Cidadão / Cliente</b><small>Acessar Clube de Descontos, explorar lojas, abrir e avaliar reclamações.</small></div>
-  </button>
-
-  <button class="role-card" data-role="lojista">
-    <div class="ric">🏪</div>
-    <div><b>Lojista / Comerciante</b><small>Gerenciar catálogo, criar cupons promocionais e responder clientes.</small></div>
-  </button>
-
-  <button class="role-card" data-role="orgao">
-    <div class="ric">🏛</div>
-    <div><b>Órgão Público / Prefeitura</b><small>Dashboard de zeladoria urbana, mapa de calor em tempo real e protocolos.</small></div>
-  </button>
-
-  <div class="note">Protótipo interativo: escolha um perfil acima para navegar nas telas específicas.</div>
-</div></div></section>
-
-<!-- DASHBOARD DINÂMICO POR PERFIL -->
-<section class="view" id="v-dashboard">
-  <div class="dash">
-    <aside class="side" id="side"></aside>
-    <div class="dmain" id="dmain"></div>
-  </div>
-</section>
+  </section>
 </main>
 
 <footer>CentroVivo · Tecnologia, cidadania e desenvolvimento para o Centro de Aracaju.</footer>
-<div class="toast" id="toast" role="status"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<!-- Leaflet JS + Leaflet.heat (API gratuita CartoDB / OpenStreetMap) -->
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js" crossorigin=""></script>
 
 <script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-let role=null; // null | 'cidadao' | 'lojista' | 'orgao'
-let curP='overview';
-let heatMapInstance=null;
-let heatFilter='all';
-let heatViewMode='both'; // 'heat' | 'pins' | 'both'
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const STORAGE_KEY = 'centrovivo_state_v2';
+const GEOAPIFY_KEY = '3c895575daed4fd7a2f503c657ae308f';
+const ACTIVE_STORE = 'Calçados Centro';
 
-const ROLES_INFO={
-  cidadao:{label:'Cliente',icon:'👤',name:'Maria Silva (Cliente)',defaultView:'inicio',defaultPanel:'minhas_occ'},
-  lojista:{label:'Lojista',icon:'🏪',name:'Calçados Centro',defaultView:'dashboard',defaultPanel:'overview'},
-  orgao:{label:'Órgão Público',icon:'🏛',name:'Prefeitura / Zeladoria',defaultView:'dashboard',defaultPanel:'overview'}
-};
-
-function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',2800)}
-
-/* NAVEGAÇÃO SUPERIOR ADAPTADA AO PERFIL (DESCONTOS APENAS NO CLIENTE; SEM MURAL PÚBLICO NO ÓRGÃO PÚBLICO) */
-function renderTopNav(){
-  const nav=$('#nav');
-  const qDisc=$('#quickDiscountLink');
-  if(qDisc){
-    if(role==='cidadao'){
-      qDisc.href='#descontos';
-      qDisc.innerHTML='<span>🏷️</span>Descontos<small class="lock" style="color:var(--green)">✓ Liberado</small>';
-    }else{
-      qDisc.href='#entrar';
-      qDisc.innerHTML='<span>🏷️</span>Descontos<small class="lock">Exclusivo p/ Clientes</small>';
-    }
-  }
-
-  if(!role){
-    nav.innerHTML=`
-      <a href="#inicio" data-v="inicio">Início</a>
-      <a href="#lojas" data-v="lojas">Lojas</a>
-      <a href="#reclame" data-v="reclame">Ocorrências</a>`;
-    $('#loginBtn').textContent='Entrar';
-    $('#loginBtn').href='#entrar';
-  }else if(role==='cidadao'){
-    nav.innerHTML=`
-      <a href="#inicio" data-v="inicio">Início</a>
-      <a href="#lojas" data-v="lojas">Marketplace</a>
-      <a href="#descontos" data-v="descontos">🏷️ Clube Descontos</a>
-      <a href="#reclame" data-v="reclame">Reclame Aqui</a>
-      <a href="#dashboard" data-v="dashboard">Minha Área</a>`;
-    $('#loginBtn').textContent='👤 Cliente (Trocar)';
-    $('#loginBtn').href='#entrar';
-  }else if(role==='lojista'){
-    nav.innerHTML=`
-      <a href="#dashboard" data-v="dashboard" data-jump="overview">Painel da Loja</a>
-      <a href="#dashboard" data-v="dashboard" data-jump="produtos">Meus Produtos</a>
-      <a href="#dashboard" data-v="dashboard" data-jump="cupons">Criar Cupons</a>
-      <a href="#dashboard" data-v="dashboard" data-jump="sac">SAC / Reclamações</a>
-      <a href="#lojas" data-v="lojas">Ver Vitrine</a>`;
-    $('#loginBtn').textContent='🏪 Lojista (Trocar)';
-    $('#loginBtn').href='#entrar';
-  }else if(role==='orgao'){
-    nav.innerHTML=`
-      <a href="#dashboard" data-v="dashboard" data-jump="overview">Dashboard Urbano</a>
-      <a href="#dashboard" data-v="dashboard" data-jump="mapa">🔥 Mapa de Calor</a>
-      <a href="#dashboard" data-v="dashboard" data-jump="demandas">Demandas da Cidade</a>`;
-    $('#loginBtn').textContent='🏛 Órgão Público (Trocar)';
-    $('#loginBtn').href='#entrar';
-  }
-  syncMobileDrawer();
+/* Sanitização contra XSS e quebra de atributos */
+function esc(str){
+  return String(str ?? '')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
 }
 
-$('#nav').onclick=e=>{
-  const jump=e.target.dataset.jump;
-  if(jump){curP=jump;if(location.hash==='#dashboard')renderDashboard();}
-};
-
-function route(){
-  renderTopNav();
-  const views=['inicio','lojas','descontos','reclame','entrar','dashboard'];
-  let h=(location.hash||'#inicio').slice(1);
-  if(!views.includes(h))h='inicio';
-
-  // Proteção: Aba de descontos apenas dentro do cliente
-  if(h==='descontos' && role!=='cidadao'){
-    toast('A aba de Descontos é exclusiva para Clientes logados.');
-    location.hash='#entrar';
-    return;
-  }
-
-  // Proteção: Órgão público não acessa o Mural Público (#reclame)
-  if(h==='reclame' && role==='orgao'){
-    curP='demandas';
-    location.hash='#dashboard';
-    return;
-  }
-
-  if(h==='dashboard' && !role){location.hash='#entrar';return;}
-  $$('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+h));
-  $$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===h && (!a.dataset.jump || a.dataset.jump===curP)));
-  if(h==='dashboard')renderDashboard();
-  if(h==='reclame')setTimeout(initClientLeafletMap, 60);
-  window.scrollTo(0,0);
+/* Dados iniciais padrão (seed) */
+function getDefaultState(){
+  return {
+    role: null,
+    curP: 'overview',
+    cidadaoProfile: { nome: 'Maria Silva', email: 'maria.silva@email.com', bairro: 'Centro, Aracaju' },
+    centroCoins: 50,
+    savedCoupons: ['CENTRO50', 'ALMOCO25'],
+    coinHistory: [
+      { data: 'Hoje, 14:10', desc: 'Demanda #CV2026003 validada por Limpeza urbana', delta: '+50 CC', tipo: 'ganho' }
+    ],
+    P: [
+      ['Tênis esportivo','Moda e acessórios',249.9,'👟','#dbe8fa',4.8,'Calçados Centro'],
+      ['Bolsa feminina','Moda e acessórios',159.9,'👜','#fbe6d2',4.8,'Calçados Centro'],
+      ['Sandália urbana','Moda e acessórios',119.9,'👡','#e8f5e9',4.7,'Calçados Centro'],
+      ['Óculos de sol','Moda e acessórios',99.9,'🕶️','#e3e8f0',4.6,'Ótica Aracaju'],
+      ['Fone bluetooth','Eletrônicos',129.9,'🎧','#e1e6fb',4.7,'Eletro Aracaju'],
+      ['Smartwatch','Eletrônicos',289,'⌚','#dff1ee',4.5,'Eletro Aracaju'],
+      ['Luminária de mesa','Casa e decoração',79.9,'💡','#fff2c9',4.4,'Casa & Cia'],
+      ['Kit de cremes','Beleza e cuidados',64.9,'🧴','#fbe0ec',4.9,'Perfumaria Central'],
+      ['Marmita do dia','Alimentação',22,'🍱','#e1f3df',4.8,'Sabor do Centro'],
+      ['Conserto de celular','Serviços',90,'🔧','#e7e7f3',4.6,'TechFix Centro']
+    ],
+    D: [
+      ['50%','Camisas e jaquetas','CENTRO50','#1d7a4a','Calçados Centro'],
+      ['40%','Calçados selecionados','PISA40','#c43a3a','Calçados Centro'],
+      ['30%','Fones e acessórios','SOM30','#1a4a9a','Eletro Aracaju'],
+      ['25%','Alimentação no almoço','ALMOCO25','#b9770e','Sabor do Centro'],
+      ['20%','Serviços de beleza','BELA20','#7a3a9a','Perfumaria Central'],
+      ['15%','Primeira compra','BEMVINDO','#0b2a63','Todas as lojas']
+    ],
+    O: [
+      {p:'CV2026001',t:'Buraco na via e calçada danificada',c:'Via e calçada',l:'Rua João Pessoa, 320',s:'Em análise',r:'Secretaria de Infraestrutura',tipo:'orgao',resp:'Equipe técnica agendada para vistoria amanhã.',avaliado:false,nota:0,comentario:'',validadoOrgao:false,coinsAmount:50,lat:-10.9118,lng:-37.0512,peso:1.0,fotos:[]},
+      {p:'CV2026002',t:'Postes sem iluminação noturna',c:'Iluminação',l:'Praça Fausto Cardoso',s:'Aberta',r:'Órgão de iluminação pública',tipo:'orgao',resp:'',avaliado:false,nota:0,comentario:'',validadoOrgao:false,coinsAmount:50,lat:-10.9136,lng:-37.0485,peso:0.95,fotos:[]},
+      {p:'CV2026003',t:'Lixo acumulado após feira',c:'Limpeza urbana',l:'Rua Laranjeiras, 410',s:'Resolvida',r:'Limpeza urbana',tipo:'orgao',resp:'Coleta extraordinária realizada às 14h.',avaliado:true,nota:5,comentario:'Atendimento rápido da equipe!',validadoOrgao:true,coinsAmount:50,lat:-10.9102,lng:-37.0528,peso:0.75,fotos:[]},
+      {p:'CV2026004',t:'Produto com defeito na troca',c:'Comércio e atendimento',l:'Calçados Centro',s:'Aberta',r:'Calçados Centro (Lojista)',tipo:'lojista',resp:'',avaliado:false,nota:0,comentario:'',validadoOrgao:false,coinsAmount:0,lat:-10.9115,lng:-37.0505,peso:0.5,fotos:[]},
+      {p:'CV2026005',t:'Cupom não aplicado no caixa',c:'Comércio e atendimento',l:'Eletro Aracaju',s:'Resolvida',r:'Eletro Aracaju (Lojista)',tipo:'lojista',resp:'Estorno realizado e cupom validado. Pedimos desculpas!',avaliado:false,nota:0,comentario:'',validadoOrgao:false,coinsAmount:0,lat:-10.9122,lng:-37.0518,peso:0.5,fotos:[]}
+    ]
+  };
 }
-addEventListener('hashchange',route);
-$('#themeBtn').onclick=()=>{const r=document.documentElement,d=getComputedStyle(r).getPropertyValue('--bg').trim()==='#0a1429';r.dataset.theme=d?'light':'dark'};
 
-/* DADOS: MARKETPLACE */
-let P=[
-  ['Tênis esportivo','Moda e acessórios',249.9,'👟','#dbe8fa',4.8,'Calçados Centro'],
-  ['Bolsa feminina','Moda e acessórios',159.9,'👜','#fbe6d2',4.8,'Calçados Centro'],
-  ['Óculos de sol','Moda e acessórios',99.9,'🕶️','#e3e8f0',4.6,'Ótica Aracaju'],
-  ['Fone bluetooth','Eletrônicos',129.9,'🎧','#e1e6fb',4.7,'Eletro Aracaju'],
-  ['Smartwatch','Eletrônicos',289,'⌚','#dff1ee',4.5,'Eletro Aracaju'],
-  ['Luminária de mesa','Casa e decoração',79.9,'💡','#fff2c9',4.4,'Casa & Cia'],
-  ['Kit de cremes','Beleza e cuidados',64.9,'🧴','#fbe0ec',4.9,'Perfumaria Central'],
-  ['Marmita do dia','Alimentação',22,'🍱','#e1f3df',4.8,'Sabor do Centro'],
-  ['Conserto de celular','Serviços',90,'🔧','#e7e7f3',4.6,'TechFix Centro']
-];
-let cat='Todas';
-function prods(){
-  const C=['Todas',...new Set(P.map(p=>p[1]))];
-  const q=$('#q').value.toLowerCase();
-  $('#cats').innerHTML=C.map(c=>`<button class="chip ${c===cat?'on':''}" data-c="${c}">${c}</button>`).join('');
-  $('#prods').innerHTML=P.filter(p=>(cat==='Todas'||p[1]===cat)&&(p[0]+p[1]+p[6]).toLowerCase().includes(q)).map(p=>`
-    <div class="card prod">
-      <div class="img" style="background:${p[4]}">${p[3]}</div>
-      <div class="b">
-        <small style="color:var(--mute)">${p[6]}</small>
-        <div><b>${p[0]}</b></div>
-        <div class="r">★ ${p[5]}</div>
-        <div class="p">R$ ${p[2].toFixed(2).replace('.',',')}</div>
-      </div>
-    </div>`).join('')||'<p class="sub">Nenhum resultado encontrado.</p>';
-}
-$('#q').oninput=prods;$('#cats').onclick=e=>{if(e.target.dataset.c){cat=e.target.dataset.c;prods()}};prods();
-
-/* DADOS: DESCONTOS (EXCLUSIVO CLIENTE) */
-let D=[
-  ['50%','Camisas e jaquetas','CENTRO50','#1d7a4a','Calçados Centro'],
-  ['40%','Calçados selecionados','PISA40','#c43a3a','Calçados Centro'],
-  ['30%','Fones e acessórios','SOM30','#1a4a9a','Eletro Aracaju'],
-  ['25%','Alimentação no almoço','ALMOCO25','#b9770e','Sabor do Centro'],
-  ['20%','Serviços de beleza','BELA20','#7a3a9a','Perfumaria Central'],
-  ['15%','Primeira compra','BEMVINDO','#0b2a63','Todas as lojas']
-];
-let savedCoupons=['CENTRO50','ALMOCO25'];
-
-function renderCups(){
-  $('#cups').innerHTML=D.map(d=>`
-    <div class="cupom" style="background:${d[3]}">
-      <small style="opacity:.85">${d[4]}</small>
-      <div class="pc">${d[0]} OFF</div>
-      <div>${d[1]}</div>
-      <code>${d[2]}</code>
-      <button data-code="${d[2]}">${savedCoupons.includes(d[2])?'✓ Salvo na carteira':'Copiar e salvar'}</button>
-    </div>`).join('');
-}
-$('#cups').onclick=e=>{
-  const c=e.target.dataset.code;
-  if(c){
-    navigator.clipboard&&navigator.clipboard.writeText(c).catch(()=>{});
-    if(!savedCoupons.includes(c))savedCoupons.push(c);
-    renderCups();
-    toast('Cupom '+c+' copiado e salvo na sua Área do Cliente!');
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return getDefaultState();
+    const parsed = JSON.parse(raw);
+    return { ...getDefaultState(), ...parsed };
+  }catch(e){
+    return getDefaultState();
   }
-};
-$('#goMyCoupons').onclick=()=>{curP='meus_cupons';};
-renderCups();
+}
 
-/* DADOS: OCORRÊNCIAS + COORDENADAS REAIS DO CENTRO DE ARACAJU PARA O MAPA DE CALOR */
-let O=[
-  {p:'CV2026001',t:'Buraco na via e calçada danificada',c:'Via e calçada',l:'Rua João Pessoa, 320',s:'Em análise',r:'Secretaria de Infraestrutura',tipo:'orgao',resp:'Equipe técnica agendada para vistoria amanhã.',avaliado:false,validadoOrgao:false,coinsAmount:50,lat:-10.9118,lng:-37.0512,peso:1.0},
-  {p:'CV2026002',t:'Postes sem iluminação noturna',c:'Iluminação',l:'Praça Fausto Cardoso',s:'Aberta',r:'Órgão de iluminação pública',tipo:'orgao',resp:'',avaliado:false,validadoOrgao:false,coinsAmount:50,lat:-10.9136,lng:-37.0485,peso:0.95},
-  {p:'CV2026003',t:'Lixo acumulado após feira',c:'Limpeza urbana',l:'Rua Laranjeiras, 410',s:'Resolvida',r:'Limpeza urbana',tipo:'orgao',resp:'Coleta extraordinária realizada às 14h.',avaliado:true,validadoOrgao:true,coinsAmount:50,lat:-10.9102,lng:-37.0528,peso:0.75},
-  {p:'CV2026004',t:'Produto com defeito na troca',c:'Comércio e atendimento',l:'Calçados Centro',s:'Aberta',r:'Calçados Centro (Lojista)',tipo:'lojista',resp:'',avaliado:false,validadoOrgao:false,coinsAmount:0,lat:-10.9115,lng:-37.0505,peso:0.5},
-  {p:'CV2026005',t:'Cupom não aplicado no caixa',c:'Comércio e atendimento',l:'Eletro Aracaju',s:'Resolvida',r:'Eletro Aracaju (Lojista)',tipo:'lojista',resp:'Estorno realizado e cupom validado. Pedimos desculpas!',avaliado:false,validadoOrgao:false,coinsAmount:0,lat:-10.9122,lng:-37.0518,peso:0.5}
-];
+let state = loadState();
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    toast('Aviso: limite de armazenamento local atingido.');
+  }
+}
 
-let centroCoins = 50;
-let coinHistory = [
-  {data:'Hoje, 14:10', desc:'Demanda #CV2026003 validada por Limpeza urbana', delta:'+50 CC', tipo:'ganho'}
-];
+let heatMapInstance = null;
+let clientMapInstance = null;
+let heatFilter = 'all';
+let heatViewMode = 'both';
+let orgaoPeriod = '7d';
+let demandaStatusFilter = 'all';
+let pendingPhotos = [];
+let presetCoords = null;
+
 const COIN_REWARDS = [
-  {id:'rw1', titulo:'10% OFF no Marketplace', loja:'Lojas participantes do Centro', custo:50, code:'COINS10', pct:'10%', cor:'#0f3a85'},
+  {id:'rw1', titulo:'10% OFF no Marketplace', loja:'Todas as lojas', custo:50, code:'COINS10', pct:'10%', cor:'#0f3a85'},
   {id:'rw2', titulo:'Vale Lanche / Café do Centro', loja:'Sabor do Centro', custo:100, code:'CAFECOINS', pct:'R$ 15', cor:'#b9770e'},
   {id:'rw3', titulo:'30% OFF Moda & Calçados', loja:'Calçados Centro', custo:150, code:'VIPCOINS30', pct:'30%', cor:'#1d7a4a'}
 ];
 
-function validarDemandaOrgao(idx, autoViaStatus=false){
-  const item = O[idx];
-  if(!item || item.tipo!=='orgao') return false;
-  if(item.validadoOrgao){
-    if(!autoViaStatus) toast('Esta demanda já foi validada pelo Órgão Público.');
-    return false;
-  }
-  const ganho = item.coinsAmount || 50;
-  item.validadoOrgao = true;
-  if(item.s === 'Aberta') item.s = 'Em análise';
-  centroCoins += ganho;
-  coinHistory.unshift({
-    data: 'Agora',
-    desc: `Demanda #${item.p} (${item.t}) validada por ${item.r}`,
-    delta: `+${ganho} CC`,
-    tipo: 'ganho'
-  });
-  return true;
-}
-
-const HISTORICO_HEAT=[
+const HISTORICO_HEAT = [
   {lat:-10.9116,lng:-37.0510,c:'Via e calçada',t:'Afundamento de paralelepípedo - Calçadão João Pessoa',peso:0.95},
   {lat:-10.9120,lng:-37.0514,c:'Via e calçada',t:'Rampa de acessibilidade obstruída - Rua João Pessoa',peso:0.9},
   {lat:-10.9085,lng:-37.0488,c:'Limpeza urbana',t:'Descarte irregular próximo ao Mercado Antônio Franco',peso:1.0},
@@ -602,196 +1013,555 @@ const HISTORICO_HEAT=[
   {lat:-10.9098,lng:-37.0519,c:'Via e calçada',t:'Calçada irregular - Rua São Cristóvão',peso:0.85}
 ];
 
-let filt='all';
-const tg={'Aberta':'t-ab','Em análise':'t-an','Resolvida':'t-ok'};
-let clientMapInstance=null;
-function initClientLeafletMap(){
-  const container=document.getElementById('clientLeafletMap');
-  if(!container)return;
-  const visiveis=O.filter(o=>filt==='all'||o.s===filt);
+function getRoleInfo(r){
+  return {
+    cidadao:{label:'Cliente',icon:'👤',name:`${state.cidadaoProfile.nome} (Cliente)`,defaultView:'inicio',defaultPanel:'minhas_occ'},
+    lojista:{label:'Lojista',icon:'🏪',name:ACTIVE_STORE,defaultView:'dashboard',defaultPanel:'overview'},
+    orgao:{label:'Órgão Público',icon:'🏛',name:'Prefeitura / Zeladoria',defaultView:'dashboard',defaultPanel:'overview'}
+  }[r];
+}
 
-  if(typeof L==='undefined'){
-    renderOfflineHeatFallback(container, visiveis.map(o=>({...o,local:o.l})));
+function toast(m){
+  const t = $('#toast');
+  t.textContent = m;
+  t.style.display = 'block';
+  clearTimeout(t._t);
+  t._t = setTimeout(() => { t.style.display = 'none'; }, 3000);
+}
+
+/* Tema claro/escuro persistente */
+(function initTheme(){
+  const savedTheme = localStorage.getItem('centrovivo_theme');
+  if(savedTheme === 'dark' || savedTheme === 'light'){
+    document.documentElement.dataset.theme = savedTheme;
+  }
+})();
+$('#themeBtn').onclick = () => {
+  const r = document.documentElement;
+  const isDark = getComputedStyle(r).getPropertyValue('--bg').trim() === '#0a1429';
+  const next = isDark ? 'light' : 'dark';
+  r.dataset.theme = next;
+  localStorage.setItem('centrovivo_theme', next);
+};
+
+/* Modal acessível */
+function openModal(title, htmlContent){
+  $('#modalTitle').textContent = title;
+  $('#modalContent').innerHTML = htmlContent;
+  $('#modalBackdrop').hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  $('#modalBackdrop').hidden = true;
+  if(!$('#mobileDrawer').classList.contains('open')){
+    document.body.style.overflow = '';
+  }
+}
+$('#modalClose').onclick = closeModal;
+$('#modalBackdrop').onclick = e => { if(e.target === $('#modalBackdrop')) closeModal(); };
+
+/* Navegação superior */
+function renderTopNav(){
+  const nav = $('#nav');
+  const qDisc = $('#quickDiscountLink');
+  const qUser = $('#quickUserLink');
+
+  if(qDisc){
+    if(state.role === 'cidadao'){
+      qDisc.href = '#descontos';
+      qDisc.innerHTML = '<span>🏷️</span>Descontos<small class="lock" style="color:var(--green)">✓ Liberado</small>';
+    }else{
+      qDisc.href = '#entrar';
+      qDisc.innerHTML = '<span>🏷️</span>Descontos<small class="lock">Exclusivo p/ Clientes</small>';
+    }
+  }
+  if(qUser){
+    qUser.href = state.role ? '#dashboard' : '#entrar';
+    qUser.innerHTML = state.role
+      ? `<span>${getRoleInfo(state.role).icon}</span>Meu Painel<small class="lock" style="color:var(--green)">✓ ${esc(getRoleInfo(state.role).label)}</small>`
+      : '<span>🔐</span>Área do Usuário';
+  }
+
+  if(!state.role){
+    nav.innerHTML = `
+      <a href="#inicio" data-v="inicio">Início</a>
+      <a href="#lojas" data-v="lojas">Lojas</a>
+      <a href="#reclame" data-v="reclame">Ocorrências</a>`;
+    $('#loginBtn').textContent = 'Entrar';
+    $('#loginBtn').href = '#entrar';
+  }else if(state.role === 'cidadao'){
+    nav.innerHTML = `
+      <a href="#inicio" data-v="inicio">Início</a>
+      <a href="#lojas" data-v="lojas">Marketplace</a>
+      <a href="#descontos" data-v="descontos">🏷️ Clube Descontos</a>
+      <a href="#reclame" data-v="reclame">Reclame Aqui</a>
+      <a href="#dashboard" data-v="dashboard">Minha Área</a>`;
+    $('#loginBtn').textContent = '👤 Cliente (Trocar)';
+    $('#loginBtn').href = '#entrar';
+  }else if(state.role === 'lojista'){
+    nav.innerHTML = `
+      <a href="#dashboard" data-v="dashboard" data-jump="overview">Painel da Loja</a>
+      <a href="#dashboard" data-v="dashboard" data-jump="produtos">Meus Produtos</a>
+      <a href="#dashboard" data-v="dashboard" data-jump="cupons">Criar Cupons</a>
+      <a href="#dashboard" data-v="dashboard" data-jump="sac">SAC / Reclamações</a>
+      <a href="#lojas" data-v="lojas">Ver Vitrine</a>`;
+    $('#loginBtn').textContent = '🏪 Lojista (Trocar)';
+    $('#loginBtn').href = '#entrar';
+  }else if(state.role === 'orgao'){
+    nav.innerHTML = `
+      <a href="#dashboard" data-v="dashboard" data-jump="overview">Dashboard Urbano</a>
+      <a href="#dashboard" data-v="dashboard" data-jump="mapa">🔥 Mapa de Calor</a>
+      <a href="#dashboard" data-v="dashboard" data-jump="demandas">Demandas da Cidade</a>`;
+    $('#loginBtn').textContent = '🏛 Órgão Público (Trocar)';
+    $('#loginBtn').href = '#entrar';
+  }
+  syncMobileDrawer();
+}
+
+$('#nav').onclick = e => {
+  const jump = e.target.dataset.jump;
+  if(jump){
+    state.curP = jump;
+    saveState();
+    if(location.hash === '#dashboard') renderDashboard();
+  }
+};
+
+function route(){
+  renderTopNav();
+  const views = ['inicio','lojas','descontos','reclame','entrar','dashboard'];
+  let h = (location.hash || '#inicio').slice(1);
+  if(!views.includes(h)) h = 'inicio';
+
+  if(h === 'descontos' && state.role !== 'cidadao'){
+    toast('A aba de Descontos é exclusiva para Clientes logados.');
+    location.hash = '#entrar';
+    return;
+  }
+  if(h === 'reclame' && state.role === 'orgao'){
+    state.curP = 'demandas';
+    saveState();
+    location.hash = '#dashboard';
+    return;
+  }
+  if(h === 'dashboard' && !state.role){
+    location.hash = '#entrar';
+    return;
+  }
+
+  $$('.view').forEach(v => v.classList.toggle('on', v.id === 'v-' + h));
+  $$('#nav a').forEach(a => {
+    const active = a.dataset.v === h && (!a.dataset.jump || a.dataset.jump === state.curP);
+    a.classList.toggle('on', active);
+    if(active) a.setAttribute('aria-current','page');
+    else a.removeAttribute('aria-current');
+  });
+
+  if(h === 'dashboard') renderDashboard();
+  if(h === 'reclame') setTimeout(initClientLeafletMap, 60);
+  window.scrollTo(0,0);
+}
+addEventListener('hashchange', route);
+
+/* Marketplace */
+let cat = 'Todas';
+function prods(){
+  const C = ['Todas', ...new Set(state.P.map(p => p[1]))];
+  const q = $('#q').value.toLowerCase();
+  $('#cats').innerHTML = C.map(c => `<button type="button" class="chip ${c === cat ? 'on' : ''}" data-c="${esc(c)}">${esc(c)}</button>`).join('');
+  $('#prods').innerHTML = state.P
+    .map((p, idx) => ({ p, idx }))
+    .filter(({ p }) => (cat === 'Todas' || p[1] === cat) && (p[0] + p[1] + p[6]).toLowerCase().includes(q))
+    .map(({ p, idx }) => `
+      <article class="card prod" data-prod-idx="${idx}" tabindex="0" role="button" aria-label="Ver detalhes de ${esc(p[0])}">
+        <div class="img" style="background:${esc(p[4])}">${esc(p[3])}</div>
+        <div class="b">
+          <small style="color:var(--mute)">${esc(p[6])}</small>
+          <div><b>${esc(p[0])}</b></div>
+          <div class="r">★ ${Number(p[5]).toFixed(1)}</div>
+          <div class="p">R$ ${Number(p[2]).toFixed(2).replace('.',',')}</div>
+        </div>
+      </article>`).join('') || '<p class="sub">Nenhum resultado encontrado.</p>';
+}
+$('#q').oninput = prods;
+$('#cats').onclick = e => { if(e.target.dataset.c){ cat = e.target.dataset.c; prods(); } };
+$('#prods').onclick = e => {
+  const card = e.target.closest('[data-prod-idx]');
+  if(!card) return;
+  const p = state.P[+card.dataset.prodIdx];
+  if(!p) return;
+  const lojaCoupons = state.D.filter(d => state.savedCoupons.includes(d[2]) && (d[4] === p[6] || d[4] === 'Todas as lojas'));
+  openModal(p[0], `
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px">
+      <div style="width:74px;height:74px;border-radius:16px;background:${esc(p[4])};display:grid;place-items:center;font-size:40px;flex-shrink:0">${esc(p[3])}</div>
+      <div>
+        <div style="font-size:13px;color:var(--mute)">Loja: <b>${esc(p[6])}</b> · ${esc(p[1])}</div>
+        <div style="font-size:24px;font-weight:800;color:var(--navy)">R$ ${Number(p[2]).toFixed(2).replace('.',',')}</div>
+        <div style="color:#f5a300;font-size:13px">★ ${Number(p[5]).toFixed(1)} avaliação verificada</div>
+      </div>
+    </div>
+    ${state.role === 'cidadao' ? `
+      <div class="note" style="margin-bottom:14px">
+        ${lojaCoupons.length
+          ? `<b>Cupons da sua carteira aplicáveis nesta loja:</b><br>${lojaCoupons.map(c => `<code>${esc(c[2])}</code> (${esc(c[0])} OFF — ${esc(c[1])})`).join('<br>')}`
+          : 'Você ainda não salvou cupons específicos desta loja. Visite o <b>Clube de Descontos</b>!'}
+      </div>
+    ` : `<div class="note" style="margin-bottom:14px">Entre como <b>Cidadão / Cliente</b> para aplicar cupons de desconto do CentroVivo.</div>`}
+    <div style="display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap">
+      ${state.role === 'cidadao' ? `<a href="#descontos" class="btn y s" onclick="closeModal()">Ver cupons</a>` : ''}
+      <button type="button" class="btn n s" onclick="closeModal();toast('Reserva simulada enviada para ${esc(p[6])}!')">Reservar na loja</button>
+    </div>
+  `);
+};
+prods();
+
+/* Clube de Descontos */
+function renderCups(){
+  $('#cups').innerHTML = state.D.map(d => `
+    <div class="cupom" style="background:${esc(d[3])}">
+      <small style="opacity:.9">${esc(d[4])}</small>
+      <div class="pc">${esc(d[0])} OFF</div>
+      <div>${esc(d[1])}</div>
+      <code>${esc(d[2])}</code>
+      <button type="button" data-code="${esc(d[2])}">${state.savedCoupons.includes(d[2]) ? '✓ Salvo na carteira' : 'Copiar e salvar'}</button>
+    </div>`).join('');
+}
+$('#cups').onclick = e => {
+  const c = e.target.dataset.code;
+  if(c){
+    navigator.clipboard && navigator.clipboard.writeText(c).catch(()=>{});
+    if(!state.savedCoupons.includes(c)){
+      state.savedCoupons.push(c);
+      saveState();
+    }
+    renderCups();
+    toast('Cupom ' + c + ' copiado e salvo na sua Área do Cliente!');
+  }
+};
+$('#goMyCoupons').onclick = () => { state.curP = 'meus_cupons'; saveState(); };
+renderCups();
+
+/* Validação de Demanda Urbana -> CentroCoins */
+function validarDemandaOrgao(idx, autoViaStatus = false){
+  const item = state.O[idx];
+  if(!item || item.tipo !== 'orgao') return false;
+  if(item.validadoOrgao){
+    if(!autoViaStatus) toast('Esta demanda já foi validada pelo Órgão Público.');
+    return false;
+  }
+  const ganho = item.coinsAmount || 50;
+  item.validadoOrgao = true;
+  if(item.s === 'Aberta') item.s = 'Em análise';
+  state.centroCoins += ganho;
+  state.coinHistory.unshift({
+    data: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+    desc: `Demanda #${item.p} (${item.t}) validada por ${item.r}`,
+    delta: `+${ganho} CC`,
+    tipo: 'ganho'
+  });
+  saveState();
+  return true;
+}
+
+/* Leitura e compressão de fotos anexadas */
+function compressImageFile(file){
+  return new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const maxW = 480;
+        const scale = Math.min(1, maxW / img.width);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/jpeg', 0.72));
+      };
+      img.onerror = () => resolve(null);
+      img.src = ev.target.result;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+$('#rp').onchange = async e => {
+  const files = [...e.target.files].slice(0, 3);
+  const results = await Promise.all(files.map(compressImageFile));
+  pendingPhotos = results.filter(Boolean);
+  $('#rpPreview').innerHTML = pendingPhotos.map((src, i) => `<img src="${src}" class="photo-thumb" alt="Prévia da foto ${i+1}">`).join('');
+};
+
+$('#quickPlaces').onclick = e => {
+  const btn = e.target.closest('[data-place]');
+  if(!btn) return;
+  $('#rl').value = btn.dataset.place;
+  presetCoords = { lat: parseFloat(btn.dataset.lat), lng: parseFloat(btn.dataset.lng) };
+  toast('Local selecionado: ' + btn.dataset.place);
+};
+$('#rl').oninput = () => { presetCoords = null; };
+
+/* Ocorrências + Mapa */
+let filt = 'all';
+const tg = {'Aberta':'t-ab','Em análise':'t-an','Resolvida':'t-ok'};
+
+function initClientLeafletMap(){
+  const container = document.getElementById('clientLeafletMap');
+  if(!container) return;
+  const visiveis = state.O.filter(o => filt === 'all' || o.s === filt);
+
+  if(typeof L === 'undefined'){
+    renderOfflineHeatFallback(container, visiveis.map(o => ({...o, local: o.l})));
     return;
   }
 
   if(clientMapInstance){
     clientMapInstance.remove();
-    clientMapInstance=null;
+    clientMapInstance = null;
   }
 
-  const centroAracaju=[-10.9115,-37.0510];
-  clientMapInstance=L.map('clientLeafletMap',{scrollWheelZoom:false}).setView(centroAracaju,15);
+  const centroAracaju = [-10.9115, -37.0510];
+  clientMapInstance = L.map('clientLeafletMap', {scrollWheelZoom: false}).setView(centroAracaju, 15);
 
-  const geoLayer=L.tileLayer(`https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=${GEOAPIFY_KEY}`,{
-    maxZoom:20,
-    attribution:'&copy; OpenStreetMap &copy; Geoapify'
+  const geoLayer = L.tileLayer(`https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=${GEOAPIFY_KEY}`, {
+    maxZoom: 20,
+    attribution: '&copy; OpenStreetMap &copy; Geoapify'
   });
-  geoLayer.on('tileerror',()=>{
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{
-      maxZoom:19,
-      attribution:'&copy; OpenStreetMap &copy; CARTO'
+  geoLayer.on('tileerror', () => {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap &copy; CARTO'
     }).addTo(clientMapInstance);
   });
   geoLayer.addTo(clientMapInstance);
 
-  const statusEmoji={'Aberta':'🔴','Em análise':'🟡','Resolvida':'🟢'};
-  visiveis.forEach(o=>{
-    if(typeof o.lat==='number' && typeof o.lng==='number'){
-      const icon=L.divIcon({
-        className:'custom-pin',
-        html:`<div style="font-size:20px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))">${statusEmoji[o.s]||'📍'}</div>`,
-        iconSize:[24,24],
-        iconAnchor:[12,12]
+  const statusEmoji = {'Aberta':'🔴','Em análise':'🟡','Resolvida':'🟢'};
+  visiveis.forEach(o => {
+    if(typeof o.lat === 'number' && typeof o.lng === 'number'){
+      const icon = L.divIcon({
+        className: 'custom-pin',
+        html: `<div style="font-size:20px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.35))">${statusEmoji[o.s] || '📍'}</div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
       });
-      L.marker([o.lat,o.lng],{icon})
+      L.marker([o.lat, o.lng], {icon})
         .addTo(clientMapInstance)
-        .bindPopup(`<b>#${o.p} · ${o.t}</b><br><small>📍 ${o.l}</small><br><small>Status: <b>${o.s}</b></small><br><small>Destino: ${o.r}</small>`);
+        .bindPopup(`<b>#${esc(o.p)} · ${esc(o.t)}</b><br><small>📍 ${esc(o.l)}</small><br><small>Status: <b>${esc(o.s)}</b></small><br><small>Destino: ${esc(o.r)}</small>`);
     }
   });
 
-  setTimeout(()=>{
-    if(clientMapInstance)clientMapInstance.invalidateSize();
-  },250);
+  setTimeout(() => { if(clientMapInstance) clientMapInstance.invalidateSize(); }, 250);
 }
 
 function occs(){
-  $('#occs').innerHTML=O.filter(o=>filt==='all'||o.s===filt).map(o=>`
+  $('#occs').innerHTML = state.O.filter(o => filt === 'all' || o.s === filt).map(o => `
     <div class="occ">
-      <div class="dot">${o.s==='Resolvida'?'✅':(o.tipo==='lojista'?'🏪':'🏛')}</div>
+      <div class="dot">${o.s === 'Resolvida' ? '✅' : (o.tipo === 'lojista' ? '🏪' : '🏛')}</div>
       <div style="flex:1">
-        <h4>${o.t}</h4>
-        <small>${o.l} · Protocolo #${o.p}</small><br>
-        <small>Encaminhada a: <b>${o.r}</b></small>
-        ${o.resp?`<div style="margin-top:6px;padding:8px;background:var(--soft);border-radius:8px;font-size:12px"><b>Resposta:</b> ${o.resp}</div>`:''}
+        <h4>${esc(o.t)}</h4>
+        <small>${esc(o.l)} · Protocolo #${esc(o.p)}</small><br>
+        <small>Encaminhada a: <b>${esc(o.r)}</b></small>
+        ${o.fotos && o.fotos.length ? `<div class="photo-strip">${o.fotos.map((src, idx) => `<img src="${src}" class="photo-thumb" data-zoom-src="${src}" alt="Foto ${idx+1} da ocorrência ${esc(o.p)}">`).join('')}</div>` : ''}
+        ${o.resp ? `<div style="margin-top:6px;padding:8px;background:var(--soft);border-radius:8px;font-size:12px"><b>Resposta:</b> ${esc(o.resp)}</div>` : ''}
       </div>
-      <span class="tag ${tg[o.s]}">${o.s}</span>
-    </div>`).join('')||'<p class="sub">Nenhuma manifestação neste filtro.</p>';
-  if(location.hash==='#reclame')setTimeout(initClientLeafletMap,50);
+      <span class="tag ${tg[o.s] || 't-en'}">${esc(o.s)}</span>
+    </div>`).join('') || '<p class="sub">Nenhuma manifestação neste filtro.</p>';
+  if(location.hash === '#reclame') setTimeout(initClientLeafletMap, 50);
 }
-$('#rtabs').onclick=e=>{if(e.target.dataset.f){filt=e.target.dataset.f;$$('#rtabs .chip').forEach(b=>b.classList.toggle('on',b===e.target));occs()}};
-const GEOAPIFY_KEY = '3c895575daed4fd7a2f503c657ae308f';
-$('#send').onclick=async ()=>{
-  const t=$('#rt').value.trim(),l=$('#rl').value.trim(),d=$('#rd').value.trim();
-  if(!t||!l||!d){toast('Preencha título, local e descrição para registrar');return}
-  const btn=$('#send');
-  btn.disabled=true; btn.textContent='Localizando endereço...';
-  const p='CV2026'+String(O.length+1).padStart(3,'0');
-  const c=$('#rc').value;
-  const isLojista = c==='Comércio e atendimento';
-  const map={'Via e calçada':'Secretaria de Infraestrutura','Iluminação':'Órgão de iluminação pública','Limpeza urbana':'Limpeza urbana','Segurança':'Órgão de segurança','Comércio e atendimento':l+' (Lojista)'};
-  let lat = -10.9115 + (Math.random()-0.5)*0.0045;
-  let lng = -37.0510 + (Math.random()-0.5)*0.0045;
-  try {
-    const q = encodeURIComponent(l + ', Centro, Aracaju, SE, Brasil');
-    const res = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${q}&limit=1&apiKey=${GEOAPIFY_KEY}`);
-    const data = await res.json();
-    if(data && data.features && data.features.length > 0){
-      [lng, lat] = data.features[0].geometry.coordinates;
-    }
-  } catch(err) {}
-  O.unshift({p,t,c,l,s:'Aberta',r:map[c],tipo:isLojista?'lojista':'orgao',resp:'',avaliado:false,validadoOrgao:false,coinsAmount:isLojista?0:50,lat,lng,peso:1.0});
-  $('#rt').value=$('#rl').value=$('#rd').value='';occs();
-  btn.disabled=false; btn.textContent='Registrar manifestação';
-  toast(`Manifestação #${p} enviada para ${isLojista?'o Lojista':'o Órgão Público'}!`);
+
+document.addEventListener('click', e => {
+  const img = e.target.closest('[data-zoom-src]');
+  if(img){
+    openModal('Evidência fotográfica', `<img src="${img.dataset.zoomSrc}" style="width:100%;border-radius:12px;display:block" alt="Foto ampliada">`);
+  }
+});
+
+$('#rtabs').onclick = e => {
+  if(e.target.dataset.f){
+    filt = e.target.dataset.f;
+    $$('#rtabs .chip').forEach(b => b.classList.toggle('on', b === e.target));
+    occs();
+  }
+};
+
+$('#send').onclick = async () => {
+  const t = $('#rt').value.trim();
+  const l = $('#rl').value.trim();
+  const d = $('#rd').value.trim();
+  if(!t || !l || !d){
+    toast('Preencha título, local e descrição para registrar.');
+    return;
+  }
+  const btn = $('#send');
+  btn.disabled = true;
+  btn.textContent = 'Localizando endereço...';
+
+  const p = 'CV2026' + String(state.O.length + 1).padStart(3,'0');
+  const c = $('#rc').value;
+  const isLojista = c === 'Comércio e atendimento';
+  const map = {
+    'Via e calçada':'Secretaria de Infraestrutura',
+    'Iluminação':'Órgão de iluminação pública',
+    'Limpeza urbana':'Limpeza urbana',
+    'Segurança':'Órgão de segurança',
+    'Comércio e atendimento': l + ' (Lojista)'
+  };
+
+  let lat = presetCoords ? presetCoords.lat : (-10.9115 + (Math.random() - 0.5) * 0.004);
+  let lng = presetCoords ? presetCoords.lng : (-37.0510 + (Math.random() - 0.5) * 0.004);
+
+  if(!presetCoords){
+    try{
+      const q = encodeURIComponent(l + ', Centro, Aracaju, SE, Brasil');
+      const res = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${q}&limit=1&apiKey=${GEOAPIFY_KEY}`);
+      const data = await res.json();
+      if(data && data.features && data.features.length > 0){
+        [lng, lat] = data.features[0].geometry.coordinates;
+      }
+    }catch(err){}
+  }
+
+  state.O.unshift({
+    p, t, c, l,
+    s: 'Aberta',
+    r: map[c],
+    tipo: isLojista ? 'lojista' : 'orgao',
+    resp: '',
+    avaliado: false,
+    nota: 0,
+    comentario: '',
+    validadoOrgao: false,
+    coinsAmount: isLojista ? 0 : 50,
+    lat, lng,
+    peso: 1.0,
+    fotos: [...pendingPhotos]
+  });
+
+  saveState();
+  $('#rt').value = $('#rl').value = $('#rd').value = $('#rp').value = '';
+  $('#rpPreview').innerHTML = '';
+  pendingPhotos = [];
+  presetCoords = null;
+  occs();
+
+  btn.disabled = false;
+  btn.textContent = 'Registrar manifestação';
+  toast(`Manifestação #${p} enviada para ${isLojista ? 'o Lojista' : 'o Órgão Público'}!`);
 };
 occs();
 
-/* LOGIN / TROCA DE PERFIL */
-$('#v-entrar').onclick=e=>{
-  const b=e.target.closest('[data-role]');
+/* Seleção de perfil & Reset de demonstração */
+$('#v-entrar').onclick = e => {
+  if(e.target.id === 'resetDemoBtn'){
+    localStorage.removeItem(STORAGE_KEY);
+    state = getDefaultState();
+    prods();
+    renderCups();
+    occs();
+    renderTopNav();
+    toast('Dados de demonstração restaurados!');
+    return;
+  }
+  const b = e.target.closest('[data-role]');
   if(b){
-    role=b.dataset.role;
-    curP=ROLES_INFO[role].defaultPanel;
-    location.hash='#'+ROLES_INFO[role].defaultView;
-    toast('Perfil ativo: '+ROLES_INFO[role].label);
+    state.role = b.dataset.role;
+    state.curP = getRoleInfo(state.role).defaultPanel;
+    saveState();
+    location.hash = '#' + getRoleInfo(state.role).defaultView;
+    toast('Perfil ativo: ' + getRoleInfo(state.role).label);
   }
 };
 
-/* RENDERIZAÇÃO DOS 3 PAINÉIS EXCLUSIVOS */
-const chip=(s)=>`<span class="tag ${tg[s]||'t-en'}">${s}</span>`;
+/* Renderização dos Dashboards */
+const chip = s => `<span class="tag ${tg[s] || 't-en'}">${esc(s)}</span>`;
 
 function renderDashboard(){
-  if(!role)return;
-  const info=ROLES_INFO[role];
-  const side=$('#side');
-  const m=$('#dmain');
+  if(!state.role) return;
+  const info = getRoleInfo(state.role);
+  const side = $('#side');
+  const m = $('#dmain');
 
-  if(role==='cidadao'){
-    side.innerHTML=`
-      <div class="role-badge">Área do Cliente<b>${info.icon} ${info.name}</b><small style="color:#ffd866;font-weight:700">🪙 ${centroCoins} CentroCoins</small></div>
-      <a href="#dashboard" class="${curP==='minhas_occ'?'on':''}" data-p="minhas_occ">⚠️ Minhas Reclamações</a>
-      <a href="#dashboard" class="${curP==='centrocoins'?'on':''}" data-p="centrocoins">🪙 CentroCoins <span style="margin-left:auto;background:var(--yellow);color:#0b2a63;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px">${centroCoins}</span></a>
-      <a href="#dashboard" class="${curP==='meus_cupons'?'on':''}" data-p="meus_cupons">🎟️ Meus Cupons Salvos</a>
+  if(state.role === 'cidadao'){
+    side.innerHTML = `
+      <div class="role-badge">Área do Cliente<b>${info.icon} ${esc(info.name)}</b><small style="color:#ffd866;font-weight:700">🪙 ${state.centroCoins} CentroCoins</small></div>
+      <a href="#dashboard" class="${state.curP === 'minhas_occ' ? 'on' : ''}" data-p="minhas_occ">⚠️ Minhas Reclamações</a>
+      <a href="#dashboard" class="${state.curP === 'centrocoins' ? 'on' : ''}" data-p="centrocoins">🪙 CentroCoins <span style="margin-left:auto;background:var(--yellow);color:#0b2a63;font-size:11px;font-weight:800;padding:2px 8px;border-radius:999px">${state.centroCoins}</span></a>
+      <a href="#dashboard" class="${state.curP === 'meus_cupons' ? 'on' : ''}" data-p="meus_cupons">🎟️ Meus Cupons Salvos</a>
       <a href="#descontos">🏷️ Clube de Descontos</a>
-      <a href="#dashboard" class="${curP==='perfil'?'on':''}" data-p="perfil">👤 Meus Dados</a>
+      <a href="#dashboard" class="${state.curP === 'perfil' ? 'on' : ''}" data-p="perfil">👤 Meus Dados</a>
       <span class="sp"></span>
-      <button id="logoutBtn" style="color:#ff9a9a">⏻ Sair da conta</button>`;
-  }else if(role==='lojista'){
-    side.innerHTML=`
-      <div class="role-badge">Painel do Lojista<b>${info.icon} ${info.name}</b></div>
-      <a href="#dashboard" class="${curP==='overview'?'on':''}" data-p="overview">📊 Visão da Loja</a>
-      <a href="#dashboard" class="${curP==='produtos'?'on':''}" data-p="produtos">📦 Meus Produtos</a>
-      <a href="#dashboard" class="${curP==='cupons'?'on':''}" data-p="cupons">🏷️ Criar Cupons</a>
-      <a href="#dashboard" class="${curP==='sac'?'on':''}" data-p="sac">💬 SAC / Reclamações</a>
+      <button type="button" id="logoutBtn" style="color:#ff9a9a">⏻ Sair da conta</button>`;
+    renderCidadaoPanel(m);
+  }else if(state.role === 'lojista'){
+    side.innerHTML = `
+      <div class="role-badge">Painel do Lojista<b>${info.icon} ${esc(info.name)}</b></div>
+      <a href="#dashboard" class="${state.curP === 'overview' ? 'on' : ''}" data-p="overview">📊 Visão da Loja</a>
+      <a href="#dashboard" class="${state.curP === 'produtos' ? 'on' : ''}" data-p="produtos">📦 Meus Produtos</a>
+      <a href="#dashboard" class="${state.curP === 'cupons' ? 'on' : ''}" data-p="cupons">🏷️ Criar Cupons</a>
+      <a href="#dashboard" class="${state.curP === 'sac' ? 'on' : ''}" data-p="sac">💬 SAC / Reclamações</a>
       <span class="sp"></span>
-      <button id="logoutBtn" style="color:#ff9a9a">⏻ Sair da conta</button>`;
-  }else if(role==='orgao'){
-    side.innerHTML=`
-      <div class="role-badge">Gestão Pública<b>${info.icon} ${info.name}</b></div>
-      <a href="#dashboard" class="${curP==='overview'?'on':''}" data-p="overview">📊 Dashboard Urbano</a>
-      <a href="#dashboard" class="${curP==='mapa'?'on':''}" data-p="mapa">🔥 Mapa de Calor</a>
-      <a href="#dashboard" class="${curP==='demandas'?'on':''}" data-p="demandas">🚧 Demandas da Cidade</a>
+      <button type="button" id="logoutBtn" style="color:#ff9a9a">⏻ Sair da conta</button>`;
+    renderLojistaPanel(m);
+  }else if(state.role === 'orgao'){
+    side.innerHTML = `
+      <div class="role-badge">Gestão Pública<b>${info.icon} ${esc(info.name)}</b></div>
+      <a href="#dashboard" class="${state.curP === 'overview' ? 'on' : ''}" data-p="overview">📊 Dashboard Urbano</a>
+      <a href="#dashboard" class="${state.curP === 'mapa' ? 'on' : ''}" data-p="mapa">🔥 Mapa de Calor</a>
+      <a href="#dashboard" class="${state.curP === 'demandas' ? 'on' : ''}" data-p="demandas">🚧 Demandas da Cidade</a>
       <span class="sp"></span>
-      <button id="logoutBtn" style="color:#ff9a9a">⏻ Sair da conta</button>`;
+      <button type="button" id="logoutBtn" style="color:#ff9a9a">⏻ Sair da conta</button>`;
+    renderOrgaoPanel(m);
   }
 
-  if(role==='cidadao') renderCidadaoPanel(m);
-  else if(role==='lojista') renderLojistaPanel(m);
-  else if(role==='orgao') renderOrgaoPanel(m);
-
-  routeHighlightNav();
+  $$('#nav a').forEach(a => a.classList.toggle('on', a.dataset.v === 'dashboard' && (!a.dataset.jump || a.dataset.jump === state.curP)));
+  syncMobileDrawer();
 }
 
-function routeHighlightNav(){
-  $$('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v==='dashboard' && (!a.dataset.jump || a.dataset.jump===curP)));
-}
-
-/* 1. TELAS DO CLIENTE / CIDADÃO */
+/* 1. Painel do Cidadão */
 function renderCidadaoPanel(m){
-  if(curP==='minhas_occ'){
-    m.innerHTML=`
-      <div class="dhead"><div><h2>Minhas Reclamações</h2><span class="sub" style="margin:0">Demandas urbanas validadas pelo órgão público geram CentroCoins</span></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn y s" data-goto="centrocoins">🪙 ${centroCoins} CentroCoins</button><a href="#reclame" class="btn n s">+ Nova manifestação</a></div></div>
+  if(state.curP === 'minhas_occ'){
+    m.innerHTML = `
+      <div class="dhead">
+        <div><h2>Minhas Reclamações</h2><span class="sub" style="margin:0">Demandas urbanas validadas pelo órgão público geram CentroCoins</span></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn y s" data-goto="centrocoins">🪙 ${state.centroCoins} CentroCoins</button>
+          <a href="#reclame" class="btn n s">+ Nova manifestação</a>
+        </div>
+      </div>
       <div class="card pad scroll">
         <table>
           <tr><th>Protocolo</th><th>Assunto</th><th>Destino</th><th>Status</th><th>Resposta / CentroCoins</th></tr>
-          ${O.map((o,i)=>`<tr>
-            <td><b>#${o.p}</b></td>
-            <td>${o.t}<br><small style="color:var(--mute)">${o.l}</small></td>
-            <td>${o.r}</td>
+          ${state.O.map((o,i) => `<tr>
+            <td><b>#${esc(o.p)}</b></td>
+            <td>
+              ${esc(o.t)}<br><small style="color:var(--mute)">${esc(o.l)}</small>
+              ${o.fotos && o.fotos.length ? `<div class="photo-strip">${o.fotos.map(src => `<img src="${src}" class="photo-thumb" data-zoom-src="${src}" alt="Foto anexada">`).join('')}</div>` : ''}
+            </td>
+            <td>${esc(o.r)}</td>
             <td>${chip(o.s)}</td>
             <td>
-              ${o.resp?`<div style="font-size:12px;margin-bottom:4px">"${o.resp}"</div>`:'<small style="color:var(--mute)">Aguardando retorno...</small>'}
-              ${o.tipo==='orgao' ? (o.validadoOrgao ? `<div style="margin:4px 0"><span class="coin-pill">🪙 +${o.coinsAmount||50} CentroCoins (Validada)</span></div>` : `<div style="margin:4px 0"><small style="color:var(--mute)">⏳ +${o.coinsAmount||50} CC após validação do órgão</small></div>`) : ''}
-              ${o.s==='Resolvida' && !o.avaliado ? `<button class="btn y s" data-eval="${i}">⭐ Avaliar solução</button>` : ''}
-              ${o.avaliado ? '<small style="color:var(--green);font-weight:600">★ Avaliado (5/5)</small>' : ''}
+              ${o.resp ? `<div style="font-size:12px;margin-bottom:4px">"${esc(o.resp)}"</div>` : '<small style="color:var(--mute)">Aguardando retorno...</small>'}
+              ${o.tipo === 'orgao' ? (o.validadoOrgao ? `<div style="margin:4px 0"><span class="coin-pill">🪙 +${o.coinsAmount || 50} CentroCoins (Validada)</span></div>` : `<div style="margin:4px 0"><small style="color:var(--mute)">⏳ +${o.coinsAmount || 50} CC após validação do órgão</small></div>`) : ''}
+              ${o.s === 'Resolvida' && !o.avaliado ? `<button type="button" class="btn y s" data-open-eval="${i}">⭐ Avaliar solução</button>` : ''}
+              ${o.avaliado ? `<small style="color:var(--green);font-weight:600">★ Avaliado (${o.nota || 5}/5)${o.comentario ? ` — "${esc(o.comentario)}"` : ''}</small>` : ''}
             </td>
           </tr>`).join('')}
         </table>
       </div>`;
-  }else if(curP==='centrocoins'){
-    const validadas = O.filter(o=>o.tipo==='orgao' && o.validadoOrgao);
-    const pendentes = O.filter(o=>o.tipo==='orgao' && !o.validadoOrgao);
-    m.innerHTML=`
+  }else if(state.curP === 'centrocoins'){
+    const validadas = state.O.filter(o => o.tipo === 'orgao' && o.validadoOrgao);
+    const pendentes = state.O.filter(o => o.tipo === 'orgao' && !o.validadoOrgao);
+    m.innerHTML = `
       <div class="dhead">
         <div><h2>🪙 CentroCoins</h2><span class="sub" style="margin:0">Sua moeda cidadã ganha quando o Órgão Público valida suas Demandas Urbanas</span></div>
         <a href="#reclame" class="btn n s">+ Reportar Demanda Urbana</a>
       </div>
-
       <div class="coin-hero">
         <div>
           <div style="font-size:13px;opacity:.9;font-weight:600">Saldo disponível para troca</div>
-          <div class="coin-val">🪙 ${centroCoins} <span style="font-size:18px;font-weight:600;color:#fff">CentroCoins</span></div>
+          <div class="coin-val">🪙 ${state.centroCoins} <span style="font-size:18px;font-weight:600;color:#fff">CentroCoins</span></div>
           <small style="opacity:.9">Cada demanda urbana validada pelo Órgão Público rende <b>+50 CentroCoins</b>.</small>
         </div>
         <div style="display:flex;gap:12px;flex-wrap:wrap">
@@ -810,13 +1580,13 @@ function renderCidadaoPanel(m){
         <h3 style="margin:0 0 4px">Trocar CentroCoins por Benefícios</h3>
         <p class="sub" style="margin-bottom:14px;font-size:13px">Use seu saldo para resgatar cupons exclusivos no comércio do Centro de Aracaju</p>
         <div class="reward-grid">
-          ${COIN_REWARDS.map(rw=>`
+          ${COIN_REWARDS.map(rw => `
             <div class="reward-card">
               <span class="reward-cost">🪙 ${rw.custo} CentroCoins</span>
-              <b>${rw.titulo}</b>
-              <small style="color:var(--mute)">${rw.loja}</small>
-              <button class="btn ${centroCoins>=rw.custo?'y':'g'} s" style="margin-top:auto;justify-content:center" data-redeem-coin="${rw.id}">
-                ${centroCoins>=rw.custo?'Resgatar cupom':'Saldo insuficiente'}
+              <b>${esc(rw.titulo)}</b>
+              <small style="color:var(--mute)">${esc(rw.loja)}</small>
+              <button type="button" class="btn ${state.centroCoins >= rw.custo ? 'y' : 'g'} s" style="margin-top:auto" data-redeem-coin="${esc(rw.id)}">
+                ${state.centroCoins >= rw.custo ? 'Resgatar cupom' : 'Saldo insuficiente'}
               </button>
             </div>`).join('')}
         </div>
@@ -824,178 +1594,212 @@ function renderCidadaoPanel(m){
 
       <div class="cols">
         <div class="card pad scroll">
-          <h3 style="margin-top:0">Status das Demandas Urbanas (Pontuação)</h3>
+          <h3 style="margin-top:0">Status das Demandas Urbanas</h3>
           <table>
             <tr><th>Protocolo</th><th>Demanda</th><th>Validação Órgão</th><th>Recompensa</th></tr>
-            ${O.filter(o=>o.tipo==='orgao').map(o=>`<tr>
-              <td><b>#${o.p}</b></td>
-              <td>${o.t}<br><small style="color:var(--mute)">${o.l}</small></td>
-              <td>${o.validadoOrgao?'<span class="tag t-ok">✓ Validada</span>':'<span class="tag t-an">Pendente</span>'}</td>
-              <td><b>${o.validadoOrgao?`+${o.coinsAmount||50} CC`:`(${o.coinsAmount||50} CC)`}</b></td>
+            ${state.O.filter(o => o.tipo === 'orgao').map(o => `<tr>
+              <td><b>#${esc(o.p)}</b></td>
+              <td>${esc(o.t)}<br><small style="color:var(--mute)">${esc(o.l)}</small></td>
+              <td>${o.validadoOrgao ? '<span class="tag t-ok">✓ Validada</span>' : '<span class="tag t-an">Pendente</span>'}</td>
+              <td><b>${o.validadoOrgao ? `+${o.coinsAmount || 50} CC` : `(${o.coinsAmount || 50} CC)`}</b></td>
             </tr>`).join('')}
           </table>
         </div>
 
         <div class="card pad">
           <h3 style="margin-top:0">Extrato de CentroCoins</h3>
-          ${coinHistory.map(h=>`
+          ${state.coinHistory.map(h => `
             <div class="occ">
-              <div class="dot">${h.tipo==='ganho'?'🪙':'🎟️'}</div>
+              <div class="dot">${h.tipo === 'ganho' ? '🪙' : '🎟️'}</div>
               <div style="flex:1">
-                <h4>${h.desc}</h4>
-                <small>${h.data}</small>
+                <h4>${esc(h.desc)}</h4>
+                <small>${esc(h.data)}</small>
               </div>
-              <b style="color:${h.tipo==='ganho'?'var(--green)':'var(--red)'}">${h.delta}</b>
+              <b style="color:${h.tipo === 'ganho' ? 'var(--green)' : 'var(--red)'}">${esc(h.delta)}</b>
             </div>`).join('')}
         </div>
       </div>`;
-  }else if(curP==='meus_cupons'){
-    const list=D.filter(d=>savedCoupons.includes(d[2]));
-    m.innerHTML=`
+  }else if(state.curP === 'meus_cupons'){
+    const list = state.D.filter(d => state.savedCoupons.includes(d[2]));
+    m.innerHTML = `
       <div class="dhead"><div><h2>Meus Cupons Salvos</h2><span class="sub" style="margin:0">Apresente o código no caixa da loja participante</span></div><a href="#descontos" class="btn y s">+ Pegar novos cupons</a></div>
-      <div class="cup">${list.map(d=>`
-        <div class="cupom" style="background:${d[3]}">
-          <small>${d[4]}</small>
-          <div class="pc">${d[0]} OFF</div>
-          <div>${d[1]}</div>
-          <code>${d[2]}</code>
-          <button data-copy="${d[2]}">Copiar código</button>
-        </div>`).join('')||'<p class="sub">Você ainda não salvou nenhum cupom.</p>'}</div>`;
+      <div class="cup">${list.map(d => `
+        <div class="cupom" style="background:${esc(d[3])}">
+          <small>${esc(d[4])}</small>
+          <div class="pc">${esc(d[0])} OFF</div>
+          <div>${esc(d[1])}</div>
+          <code>${esc(d[2])}</code>
+          <div style="display:flex;gap:8px;margin-top:auto">
+            <button type="button" data-copy="${esc(d[2])}">Copiar código</button>
+            <button type="button" data-remove-cup="${esc(d[2])}" style="background:rgba(0,0,0,.25);color:#fff">Remover</button>
+          </div>
+        </div>`).join('') || '<p class="sub">Você ainda não salvou nenhum cupom.</p>'}</div>`;
   }else{
-    m.innerHTML=`
+    m.innerHTML = `
       <div class="dhead"><div><h2>Meus Dados</h2><span class="sub" style="margin:0">Perfil de Cliente · Aracaju/SE</span></div></div>
       <div class="card pad" style="max-width:500px">
-        <label>Nome completo</label><input value="Maria Silva">
-        <label>E-mail</label><input value="maria.silva@email.com">
-        <label>Bairro</label><input value="Centro, Aracaju">
-        <div style="margin-top:16px"><button class="btn n s" onclick="toast('Dados atualizados!')">Salvar alterações</button></div>
+        <label for="pf_nome">Nome completo</label><input id="pf_nome" value="${esc(state.cidadaoProfile.nome)}">
+        <label for="pf_email">E-mail</label><input id="pf_email" type="email" value="${esc(state.cidadaoProfile.email)}">
+        <label for="pf_bairro">Bairro</label><input id="pf_bairro" value="${esc(state.cidadaoProfile.bairro)}">
+        <div style="margin-top:16px"><button type="button" class="btn n s" id="saveProfileBtn">Salvar alterações</button></div>
       </div>`;
   }
 }
 
-/* 2. TELAS DO LOJISTA */
+/* 2. Painel do Lojista (Isolado para ACTIVE_STORE) */
 function renderLojistaPanel(m){
-  const lojaOccs=O.filter(o=>o.tipo==='lojista');
-  if(curP==='overview'){
-    m.innerHTML=`
-      <div class="dhead"><div><h2>Visão Geral · Calçados Centro</h2><span class="sub" style="margin:0">Desempenho da sua loja no CentroVivo</span></div></div>
+  const meusProdutos = state.P.filter(p => p[6] === ACTIVE_STORE);
+  const meusCupons = state.D.filter(d => d[4] === ACTIVE_STORE);
+  const lojaOccs = state.O
+    .map((o, idx) => ({ o, idx }))
+    .filter(({ o }) => o.tipo === 'lojista' && o.l.toLowerCase().includes(ACTIVE_STORE.toLowerCase()));
+
+  if(state.curP === 'overview'){
+    m.innerHTML = `
+      <div class="dhead"><div><h2>Visão Geral · ${esc(ACTIVE_STORE)}</h2><span class="sub" style="margin:0">Desempenho exclusivo da sua loja no CentroVivo</span></div></div>
       <div class="kpis">
-        <div class="card kpi"><div class="ic" style="background:#dbeafe">👁️</div><div><b>3.420</b><span>Visitas na vitrine</span></div></div>
-        <div class="card kpi"><div class="ic" style="background:#d9f3de">🎟️</div><div><b>148</b><span>Cupons resgatados</span></div></div>
-        <div class="card kpi"><div class="ic" style="background:#fff0cf">💬</div><div><b>${lojaOccs.filter(o=>o.s!=='Resolvida').length}</b><span>SAC em aberto</span></div></div>
+        <div class="card kpi"><div class="ic" style="background:#dbeafe">📦</div><div><b>${meusProdutos.length}</b><span>Produtos ativos</span></div></div>
+        <div class="card kpi"><div class="ic" style="background:#d9f3de">🎟️</div><div><b>${meusCupons.length}</b><span>Cupons ativos</span></div></div>
+        <div class="card kpi"><div class="ic" style="background:#fff0cf">💬</div><div><b>${lojaOccs.filter(({o}) => o.s !== 'Resolvida').length}</b><span>SAC em aberto</span></div></div>
         <div class="card kpi"><div class="ic" style="background:#eadcfb">⭐</div><div><b>4.8</b><span>Nota dos clientes</span></div></div>
       </div>
       <div class="card pad">
-        <b>Últimas manifestações direcionadas à sua loja</b>
+        <b>Manifestações direcionadas à ${esc(ACTIVE_STORE)}</b>
         <div class="scroll" style="margin-top:10px">
           <table><tr><th>Protocolo</th><th>Cliente relatou</th><th>Status</th><th>Ação</th></tr>
-          ${lojaOccs.map(o=>`<tr><td>#${o.p}</td><td>${o.t}</td><td>${chip(o.s)}</td><td><button class="btn g s" data-goto="sac">Responder</button></td></tr>`).join('')}
+          ${lojaOccs.map(({o}) => `<tr><td>#${esc(o.p)}</td><td>${esc(o.t)}</td><td>${chip(o.s)}</td><td><button type="button" class="btn g s" data-goto="sac">Responder</button></td></tr>`).join('') || '<tr><td colspan="4">Nenhuma manifestação para esta loja.</td></tr>'}
           </table>
         </div>
       </div>`;
-  }else if(curP==='produtos'){
-    m.innerHTML=`
-      <div class="dhead"><div><h2>Meus Produtos no Marketplace</h2><span class="sub" style="margin:0">Cadastre ou gerencie os itens exibidos para os clientes</span></div></div>
+  }else if(state.curP === 'produtos'){
+    m.innerHTML = `
+      <div class="dhead"><div><h2>Meus Produtos · ${esc(ACTIVE_STORE)}</h2><span class="sub" style="margin:0">Cadastre ou gerencie os itens da sua vitrine no Marketplace</span></div></div>
       <div class="cols">
         <div class="card pad">
           <h3 style="margin-top:0">Cadastrar novo produto</h3>
-          <label>Nome do produto</label><input id="np_nome" placeholder="Ex.: Sandália de couro">
+          <label for="np_nome">Nome do produto</label><input id="np_nome" placeholder="Ex.: Sandália de couro">
           <div class="form-row">
-            <div><label>Categoria</label><select id="np_cat"><option>Moda e acessórios</option><option>Eletrônicos</option><option>Casa e decoração</option><option>Alimentação</option></select></div>
-            <div><label>Preço (R$)</label><input id="np_preco" type="number" step="0.01" placeholder="129.90"></div>
+            <div><label for="np_cat">Categoria</label><select id="np_cat"><option>Moda e acessórios</option><option>Eletrônicos</option><option>Casa e decoração</option><option>Alimentação</option></select></div>
+            <div><label for="np_preco">Preço (R$)</label><input id="np_preco" type="number" step="0.01" placeholder="129.90"></div>
           </div>
-          <label>Ícone ilustrativo</label>
+          <label for="np_ico">Ícone ilustrativo</label>
           <select id="np_ico"><option value="👞">👞 Sapato</option><option value="👗">👗 Vestuário</option><option value="🎒">🎒 Mochila</option><option value="📱">📱 Eletrônico</option></select>
-          <div style="margin-top:16px"><button class="btn n" id="addProdBtn">+ Publicar no Marketplace</button></div>
+          <div style="margin-top:16px"><button type="button" class="btn n" id="addProdBtn">+ Publicar no Marketplace</button></div>
         </div>
         <div class="card pad scroll">
-          <h3 style="margin-top:0">Catálogo ativo</h3>
+          <h3 style="margin-top:0">Catálogo de ${esc(ACTIVE_STORE)} (${meusProdutos.length})</h3>
           <table><tr><th>Item</th><th>Categoria</th><th>Preço</th></tr>
-          ${P.map(p=>`<tr><td>${p[3]} <b>${p[0]}</b></td><td>${p[1]}</td><td>R$ ${p[2].toFixed(2).replace('.',',')}</td></tr>`).join('')}
+          ${meusProdutos.map(p => `<tr><td>${esc(p[3])} <b>${esc(p[0])}</b></td><td>${esc(p[1])}</td><td>R$ ${Number(p[2]).toFixed(2).replace('.',',')}</td></tr>`).join('')}
           </table>
         </div>
       </div>`;
-  }else if(curP==='cupons'){
-    m.innerHTML=`
-      <div class="dhead"><div><h2>Gestão de Cupons</h2><span class="sub" style="margin:0">Crie promoções exclusivas para clientes do Clube de Descontos</span></div></div>
+  }else if(state.curP === 'cupons'){
+    m.innerHTML = `
+      <div class="dhead"><div><h2>Gestão de Cupons · ${esc(ACTIVE_STORE)}</h2><span class="sub" style="margin:0">Crie promoções exclusivas para clientes do Clube de Descontos</span></div></div>
       <div class="cols">
         <div class="card pad">
           <h3 style="margin-top:0">Novo Cupom Promocional</h3>
-          <label>Código do Cupom</label><input id="nc_cod" placeholder="Ex.: VERAO25" style="text-transform:uppercase">
-          <label>Percentual de Desconto</label><input id="nc_pct" placeholder="Ex.: 25%">
-          <label>Regra / Descrição</label><input id="nc_desc" placeholder="Ex.: Válido para toda a linha verão">
-          <div style="margin-top:16px"><button class="btn y" id="addCupBtn">+ Lançar no Clube de Descontos</button></div>
+          <label for="nc_cod">Código do Cupom</label><input id="nc_cod" placeholder="Ex.: VERAO25" style="text-transform:uppercase">
+          <label for="nc_pct">Percentual de Desconto</label><input id="nc_pct" placeholder="Ex.: 25%">
+          <label for="nc_desc">Regra / Descrição</label><input id="nc_desc" placeholder="Ex.: Válido para toda a linha verão">
+          <div style="margin-top:16px"><button type="button" class="btn y" id="addCupBtn">+ Lançar no Clube de Descontos</button></div>
         </div>
         <div class="card pad scroll">
-          <h3 style="margin-top:0">Cupons ativos na plataforma</h3>
-          <table><tr><th>Código</th><th>Desconto</th><th>Descrição</th><th>Loja</th></tr>
-          ${D.map(d=>`<tr><td><code><b>${d[2]}</b></code></td><td>${d[0]}</td><td>${d[1]}</td><td>${d[4]}</td></tr>`).join('')}
+          <h3 style="margin-top:0">Cupons ativos da ${esc(ACTIVE_STORE)} (${meusCupons.length})</h3>
+          <table><tr><th>Código</th><th>Desconto</th><th>Descrição</th></tr>
+          ${meusCupons.map(d => `<tr><td><code><b>${esc(d[2])}</b></code></td><td>${esc(d[0])}</td><td>${esc(d[1])}</td></tr>`).join('')}
           </table>
         </div>
       </div>`;
-  }else if(curP==='sac'){
-    m.innerHTML=`
-      <div class="dhead"><div><h2>SAC · Atendimento ao Consumidor</h2><span class="sub" style="margin:0">Responda reclamações feitas sobre o seu estabelecimento</span></div></div>
+  }else if(state.curP === 'sac'){
+    m.innerHTML = `
+      <div class="dhead"><div><h2>SAC · ${esc(ACTIVE_STORE)}</h2><span class="sub" style="margin:0">Responda reclamações feitas sobre o seu estabelecimento</span></div></div>
       <div class="card pad scroll">
         <table><tr><th>Protocolo</th><th>Reclamação</th><th>Status</th><th>Resposta da Loja</th></tr>
-        ${O.map((o,i)=>o.tipo==='lojista'?`<tr>
-          <td><b>#${o.p}</b></td>
-          <td><b>${o.t}</b><br><small>${o.l}</small></td>
+        ${lojaOccs.map(({o, idx}) => `<tr>
+          <td><b>#${esc(o.p)}</b></td>
           <td>
-            <select data-st="${i}">
-              ${['Aberta','Em análise','Resolvida'].map(s=>`<option ${s===o.s?'selected':''}>${s}</option>`).join('')}
+            <b>${esc(o.t)}</b><br><small>${esc(o.l)}</small>
+            ${o.fotos && o.fotos.length ? `<div class="photo-strip">${o.fotos.map(src => `<img src="${src}" class="photo-thumb" data-zoom-src="${src}" alt="Evidência">`).join('')}</div>` : ''}
+          </td>
+          <td>
+            <select data-st="${idx}">
+              ${['Aberta','Em análise','Resolvida'].map(s => `<option ${s === o.s ? 'selected' : ''}>${s}</option>`).join('')}
             </select>
           </td>
           <td>
             <div class="sac-resp-box">
-              <input id="resp_${i}" value="${o.resp}" placeholder="Escreva a solução ao cliente...">
-              <button class="btn n s" data-save-resp="${i}">Enviar</button>
+              <input id="resp_${idx}" value="${esc(o.resp)}" placeholder="Escreva a solução ao cliente...">
+              <button type="button" class="btn n s" data-save-resp="${idx}">Enviar</button>
             </div>
           </td>
-        </tr>`:'').join('')}
+        </tr>`).join('') || '<tr><td colspan="4">Nenhum chamado de SAC aberto para sua loja.</td></tr>'}
         </table>
       </div>`;
   }
 }
 
-/* 3. TELAS DO ÓRGÃO PÚBLICO (DASHBOARD MELHORADO + MAPA DE CALOR CARTODB/LEAFLET + FALLBACK OFFLINE) */
+/* 3. Painel do Órgão Público */
 function renderOrgaoPanel(m){
-  const pubOccs=O.filter(o=>o.tipo==='orgao');
-  const abertas=pubOccs.filter(o=>o.s==='Aberta').length;
-  const analise=pubOccs.filter(o=>o.s==='Em análise').length;
-  const resolvidas=pubOccs.filter(o=>o.s==='Resolvida').length + 142;
+  const pubOccs = state.O.filter(o => o.tipo === 'orgao');
+  const abertas = pubOccs.filter(o => o.s === 'Aberta').length;
+  const analise = pubOccs.filter(o => o.s === 'Em análise').length;
+  const baseResolvidas = { '7d': 142, '30d': 584, 'trim': 1690 }[orgaoPeriod];
+  const resolvidas = pubOccs.filter(o => o.s === 'Resolvida').length + baseResolvidas;
+  const slaLabel = { '7d': '32h', '30d': '29h', 'trim': '34h' }[orgaoPeriod];
 
-  if(curP==='overview'){
-    const serieAbertos=[22,19,25,18,24,16,14];
-    const serieResolvidos=[18,20,22,21,25,20,19];
-    const dias=['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'];
-    const pts=arr=>arr.map((v,i)=>`${35+i*78},${155 - v*4.5}`).join(' ');
+  if(state.curP === 'overview'){
+    const chartData = {
+      '7d': {
+        labels: ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom'],
+        abertos: [22,19,25,18,24,16,14],
+        resolvidos: [18,20,22,21,25,20,19],
+        max: 30
+      },
+      '30d': {
+        labels: ['Sem 1','Sem 2','Sem 3','Sem 4'],
+        abertos: [148,162,139,131],
+        resolvidos: [140,158,145,141],
+        max: 180
+      },
+      'trim': {
+        labels: ['Mês 1','Mês 2','Mês 3'],
+        abertos: [560,610,545],
+        resolvidos: [540,595,555],
+        max: 660
+      }
+    }[orgaoPeriod];
 
-    m.innerHTML=`
+    const stepX = chartData.labels.length > 1 ? 470 / (chartData.labels.length - 1) : 235;
+    const pts = arr => arr.map((v,i) => `${35 + i * stepX},${155 - (v / chartData.max) * 120}`).join(' ');
+
+    m.innerHTML = `
       <div class="dhead">
         <div><h2>Dashboard de Inteligência Urbana</h2><span class="sub" style="margin:0">Prefeitura de Aracaju · Monitoramento do Centro Histórico e Comercial</span></div>
         <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn y s" data-goto="mapa">🔥 Ampliar Mapa de Calor</button>
-          <select aria-label="Período"><option>Últimos 7 dias</option><option>Últimos 30 dias</option><option>Este trimestre</option></select>
+          <button type="button" class="btn y s" data-goto="mapa">🔥 Ampliar Mapa de Calor</button>
+          <select id="orgaoPeriodSel" aria-label="Período">
+            <option value="7d" ${orgaoPeriod === '7d' ? 'selected' : ''}>Últimos 7 dias</option>
+            <option value="30d" ${orgaoPeriod === '30d' ? 'selected' : ''}>Últimos 30 dias</option>
+            <option value="trim" ${orgaoPeriod === 'trim' ? 'selected' : ''}>Este trimestre</option>
+          </select>
         </div>
       </div>
 
-      <!-- KPIs Executivos -->
       <div class="kpis">
         <div class="card kpi"><div class="ic" style="background:#fde0e0">🚨</div><div><b>${abertas}</b><span>Aguardando triagem</span><span class="delta" style="color:var(--red)">● Prioridade alta</span></div></div>
         <div class="card kpi"><div class="ic" style="background:#fff0cf">🚧</div><div><b>${analise}</b><span>Equipes em campo</span><span class="delta" style="color:var(--orange)">● Em execução</span></div></div>
-        <div class="card kpi"><div class="ic" style="background:#d9f3de">✅</div><div><b>${resolvidas}</b><span>Demandas resolvidas</span><span class="delta" style="color:var(--green)">▲ +14% vs mês ant.</span></div></div>
-        <div class="card kpi"><div class="ic" style="background:#dbeafe">⏱️</div><div><b>32h</b><span>SLA médio de solução</span><span class="delta" style="color:var(--green)">▼ -6h mais rápido</span></div></div>
+        <div class="card kpi"><div class="ic" style="background:#d9f3de">✅</div><div><b>${resolvidas}</b><span>Demandas resolvidas</span><span class="delta" style="color:var(--green)">▲ +14% vs período ant.</span></div></div>
+        <div class="card kpi"><div class="ic" style="background:#dbeafe">⏱️</div><div><b>${slaLabel}</b><span>SLA médio de solução</span><span class="delta" style="color:var(--green)">▼ -6h mais rápido</span></div></div>
         <div class="card kpi"><div class="ic" style="background:#eadcfb">⭐</div><div><b>4.6/5</b><span>Satisfação cidadã</span><span class="delta" style="color:var(--navy)">92% aprovação</span></div></div>
       </div>
 
-      <!-- Mapa de Calor Integrado + Desempenho por Secretaria -->
       <div class="dcols">
         <div class="card pad">
           <div class="heat-toolbar">
             <div><b>🔥 Mapa de Calor de Ocorrências (Centro de Aracaju)</b><br><small style="color:var(--mute)">Concentração geográfica de chamados urbanos</small></div>
             <div class="cats" style="margin:0" id="heatCatChips">
-              ${['all','Via e calçada','Iluminação','Limpeza urbana','Segurança'].map(c=>`<button class="chip ${heatFilter===c?'on':''}" data-hcat="${c}">${c==='all'?'Todas':c}</button>`).join('')}
+              ${['all','Via e calçada','Iluminação','Limpeza urbana','Segurança'].map(c => `<button type="button" class="chip ${heatFilter === c ? 'on' : ''}" data-hcat="${esc(c)}">${c === 'all' ? 'Todas' : esc(c)}</button>`).join('')}
             </div>
           </div>
           <div id="leafletHeatMap" style="height:310px"></div>
@@ -1010,38 +1814,37 @@ function renderOrgaoPanel(m){
           <p class="sub" style="font-size:12px;margin-bottom:14px">Distribuição e cumprimento de SLA</p>
           <ul class="leg">
             <li>
-              <div class="leg-top"><span><i style="background:#0f5fd0"></i>EMURB (Vias e Calçadas)</span><b>42% (64)</b></div>
+              <div class="leg-top"><span><i style="background:#0f5fd0"></i>EMURB (Vias e Calçadas)</span><b>42%</b></div>
               <div class="bar-bg"><div class="bar-fill" style="width:42%;background:#0f5fd0"></div></div>
             </li>
             <li>
-              <div class="leg-top"><span><i style="background:#ffc20e"></i>Iluminação Pública</span><b>28% (43)</b></div>
+              <div class="leg-top"><span><i style="background:#ffc20e"></i>Iluminação Pública</span><b>28%</b></div>
               <div class="bar-bg"><div class="bar-fill" style="width:28%;background:#ffc20e"></div></div>
             </li>
             <li>
-              <div class="leg-top"><span><i style="background:#3a9e4a"></i>EMSURB (Limpeza Urbana)</span><b>19% (29)</b></div>
+              <div class="leg-top"><span><i style="background:#3a9e4a"></i>EMSURB (Limpeza Urbana)</span><b>19%</b></div>
               <div class="bar-bg"><div class="bar-fill" style="width:19%;background:#3a9e4a"></div></div>
             </li>
             <li>
-              <div class="leg-top"><span><i style="background:#e5484d"></i>SMTT / Guarda Municipal</span><b>11% (17)</b></div>
+              <div class="leg-top"><span><i style="background:#e5484d"></i>SMTT / Guarda Municipal</span><b>11%</b></div>
               <div class="bar-bg"><div class="bar-fill" style="width:11%;background:#e5484d"></div></div>
             </li>
           </ul>
-          <div class="note" style="margin-top:16px"><b>Ponto crítico da semana:</b> Calçadão da Rua João Pessoa e entorno do Mercado Antônio Franco concentram 48% dos chamados.</div>
+          <div class="note" style="margin-top:16px"><b>Ponto crítico:</b> Calçadão da Rua João Pessoa e entorno do Mercado Antônio Franco concentram 48% dos chamados.</div>
         </div>
       </div>
 
-      <!-- Gráfico de Fluxo Semanal + Triagem Rápida -->
       <div class="dcols">
         <div class="card pad">
-          <b>Evolução Semanal: Chamados Abertos vs. Resolvidos</b>
-          <svg viewBox="0 0 540 185" width="100%" style="margin-top:10px" role="img" aria-label="Gráfico semanal de chamados abertos e resolvidos">
+          <b>Evolução no Período: Chamados Abertos vs. Resolvidos</b>
+          <svg viewBox="0 0 540 185" width="100%" style="margin-top:10px" role="img" aria-label="Gráfico de chamados abertos e resolvidos">
             <g stroke="var(--line)">
               <line x1="25" x2="520" y1="30" y2="30"/><line x1="25" x2="520" y1="75" y2="75"/>
               <line x1="25" x2="520" y1="120" y2="120"/><line x1="25" x2="520" y1="155" y2="155"/>
             </g>
-            <polyline fill="none" stroke="#e5484d" stroke-width="3" points="${pts(serieAbertos)}"/>
-            <polyline fill="none" stroke="#3a9e4a" stroke-width="3" points="${pts(serieResolvidos)}"/>
-            ${dias.map((d,i)=>`<text x="${35+i*78}" y="175" font-size="11" fill="var(--mute)" text-anchor="middle">${d}</text>`).join('')}
+            <polyline fill="none" stroke="#e5484d" stroke-width="3" points="${pts(chartData.abertos)}"/>
+            <polyline fill="none" stroke="#3a9e4a" stroke-width="3" points="${pts(chartData.resolvidos)}"/>
+            ${chartData.labels.map((d,i) => `<text x="${35 + i * stepX}" y="175" font-size="11" fill="var(--mute)" text-anchor="middle">${esc(d)}</text>`).join('')}
           </svg>
           <small><span style="color:#e5484d">●</span> Novos Chamados &nbsp;&nbsp; <span style="color:#3a9e4a">●</span> Demandas Concluídas</small>
         </div>
@@ -1049,14 +1852,14 @@ function renderOrgaoPanel(m){
         <div class="card pad">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
             <b>Fila Prioritária de Triagem</b>
-            <button class="btn g s" data-goto="demandas">Gerenciar todos</button>
+            <button type="button" class="btn g s" data-goto="demandas">Gerenciar todos</button>
           </div>
-          ${pubOccs.map(o=>`
+          ${pubOccs.map(o => `
             <div class="occ">
               <div class="dot">🏛</div>
               <div style="flex:1">
-                <h4>#${o.p} · ${o.t}</h4>
-                <small>📍 ${o.l} · <b>${o.c}</b></small>
+                <h4>#${esc(o.p)} · ${esc(o.t)}</h4>
+                <small>📍 ${esc(o.l)} · <b>${esc(o.c)}</b></small>
               </div>
               ${chip(o.s)}
             </div>`).join('')}
@@ -1064,19 +1867,19 @@ function renderOrgaoPanel(m){
       </div>`;
     setTimeout(initLeafletHeatMap, 50);
 
-  }else if(curP==='mapa'){
-    m.innerHTML=`
+  }else if(state.curP === 'mapa'){
+    m.innerHTML = `
       <div class="dhead">
         <div><h2>Mapa de Calor Urbano · Centro de Aracaju</h2><span class="sub" style="margin:0">Visualização georreferenciada em tempo real</span></div>
-        <div style="display:flex;gap:6px">
-          <button class="chip ${heatViewMode==='both'?'on':''}" data-hmode="both">Calor + Pins</button>
-          <button class="chip ${heatViewMode==='heat'?'on':''}" data-hmode="heat">Apenas Calor</button>
-          <button class="chip ${heatViewMode==='pins'?'on':''}" data-hmode="pins">Apenas Pins</button>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button type="button" class="chip ${heatViewMode === 'both' ? 'on' : ''}" data-hmode="both">Calor + Pins</button>
+          <button type="button" class="chip ${heatViewMode === 'heat' ? 'on' : ''}" data-hmode="heat">Apenas Calor</button>
+          <button type="button" class="chip ${heatViewMode === 'pins' ? 'on' : ''}" data-hmode="pins">Apenas Pins</button>
         </div>
       </div>
       <div class="card pad">
         <div class="cats" id="heatCatChips">
-          ${['all','Via e calçada','Iluminação','Limpeza urbana','Segurança'].map(c=>`<button class="chip ${heatFilter===c?'on':''}" data-hcat="${c}">${c==='all'?'Todas as categorias':c}</button>`).join('')}
+          ${['all','Via e calçada','Iluminação','Limpeza urbana','Segurança'].map(c => `<button type="button" class="chip ${heatFilter === c ? 'on' : ''}" data-hcat="${esc(c)}">${c === 'all' ? 'Todas as categorias' : esc(c)}</button>`).join('')}
         </div>
         <div id="leafletHeatMap" style="height:480px"></div>
         <div class="heat-legend">
@@ -1086,47 +1889,59 @@ function renderOrgaoPanel(m){
       </div>`;
     setTimeout(initLeafletHeatMap, 50);
 
-  }else if(curP==='demandas'){
-    m.innerHTML=`
-      <div class="dhead"><div><h2>Gestão de Demandas Urbanas</h2><span class="sub" style="margin:0">Valide as demandas procedentes para liberar CentroCoins ao cidadão e atualize o parecer</span></div></div>
+  }else if(state.curP === 'demandas'){
+    const filteredOrgao = state.O
+      .map((o, i) => ({ o, i }))
+      .filter(({ o }) => o.tipo === 'orgao' && (demandaStatusFilter === 'all' || o.s === demandaStatusFilter));
+
+    m.innerHTML = `
+      <div class="dhead">
+        <div><h2>Gestão de Demandas Urbanas</h2><span class="sub" style="margin:0">Valide as demandas procedentes para liberar CentroCoins ao cidadão e atualize o parecer</span></div>
+        <div class="cats" style="margin:0">
+          ${['all','Aberta','Em análise','Resolvida'].map(st => `<button type="button" class="chip ${demandaStatusFilter === st ? 'on' : ''}" data-dst="${esc(st)}">${st === 'all' ? 'Todas' : esc(st)}</button>`).join('')}
+        </div>
+      </div>
       <div class="card pad scroll">
         <table><tr><th>Protocolo</th><th>Ocorrência</th><th>Categoria / Órgão</th><th>Validação Cidadã</th><th>Status</th><th>Parecer Oficial</th></tr>
-        ${O.map((o,i)=>o.tipo==='orgao'?`<tr>
-          <td><b>#${o.p}</b></td>
-          <td><b>${o.t}</b><br><small>📍 ${o.l}</small></td>
-          <td>${o.c}<br><small style="color:var(--mute)">${o.r}</small></td>
+        ${filteredOrgao.map(({o, i}) => `<tr>
+          <td><b>#${esc(o.p)}</b></td>
+          <td>
+            <b>${esc(o.t)}</b><br><small>📍 ${esc(o.l)}</small>
+            ${o.fotos && o.fotos.length ? `<div class="photo-strip">${o.fotos.map(src => `<img src="${src}" class="photo-thumb" data-zoom-src="${src}" alt="Foto cidadão">`).join('')}</div>` : ''}
+          </td>
+          <td>${esc(o.c)}<br><small style="color:var(--mute)">${esc(o.r)}</small></td>
           <td>
             ${o.validadoOrgao
-              ? `<span class="coin-pill">✓ Validada (+${o.coinsAmount||50} CC)</span>`
-              : `<button class="btn y s" data-validate-orgao="${i}">✓ Validar (+${o.coinsAmount||50} CC)</button>`}
+              ? `<span class="coin-pill">✓ Validada (+${o.coinsAmount || 50} CC)</span>`
+              : `<button type="button" class="btn y s" data-validate-orgao="${i}">✓ Validar (+${o.coinsAmount || 50} CC)</button>`}
           </td>
           <td>
             <select data-st="${i}">
-              ${['Aberta','Em análise','Resolvida'].map(s=>`<option ${s===o.s?'selected':''}>${s}</option>`).join('')}
+              ${['Aberta','Em análise','Resolvida'].map(s => `<option ${s === o.s ? 'selected' : ''}>${s}</option>`).join('')}
             </select>
           </td>
           <td>
             <div class="sac-resp-box">
-              <input id="resp_${i}" value="${o.resp}" placeholder="Informe providência tomada...">
-              <button class="btn n s" data-save-resp="${i}">Publicar</button>
+              <input id="resp_${i}" value="${esc(o.resp)}" placeholder="Informe providência tomada...">
+              <button type="button" class="btn n s" data-save-resp="${i}">Publicar</button>
             </div>
           </td>
-        </tr>`:'').join('')}
+        </tr>`).join('') || '<tr><td colspan="6">Nenhuma demanda urbana neste filtro.</td></tr>'}
         </table>
       </div>`;
   }
 }
 
-/* RENDERIZAÇÃO OFFLINE DE BACKUP CASO A REDE BLOQUEIE SCRIPTS EXTERNOS */
+/* Fallback Offline do Mapa */
 function renderOfflineHeatFallback(container, todosPontos){
-  const minLat=-10.9152, maxLat=-10.9078, minLng=-37.0555, maxLng=-37.0470;
-  const toXY=(lat,lng)=>({
+  const minLat = -10.9152, maxLat = -10.9078, minLng = -37.0555, maxLng = -37.0470;
+  const toXY = (lat, lng) => ({
     x: Math.max(8, Math.min(92, ((lng - minLng)/(maxLng - minLng))*100)),
     y: Math.max(10, Math.min(90, (1 - (lat - minLat)/(maxLat - minLat))*100))
   });
-  const catEmoji={'Via e calçada':'🚧','Iluminação':'💡','Limpeza urbana':'🧹','Segurança':'🚓'};
+  const catEmoji = {'Via e calçada':'🚧','Iluminação':'💡','Limpeza urbana':'🧹','Segurança':'🚓'};
 
-  container.innerHTML=`
+  container.innerHTML = `
     <div style="position:relative;width:100%;height:100%;background:#e9f0fa;overflow:hidden;border-radius:14px">
       <svg viewBox="0 0 800 420" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%">
         <rect width="800" height="420" fill="#eef4fc"/>
@@ -1146,24 +1961,29 @@ function renderOfflineHeatFallback(container, todosPontos){
           <text x="95" y="145">Terminal Centro</text>
         </g>
       </svg>
-      ${(heatViewMode!=='pins')?todosPontos.map(pt=>{
-        const p=toXY(pt.lat,pt.lng);
+      ${(heatViewMode !== 'pins') ? todosPontos.map(pt => {
+        const p = toXY(pt.lat, pt.lng);
         return `<div style="position:absolute;left:${p.x}%;top:${p.y}%;width:110px;height:110px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,rgba(229,72,77,.58) 0%,rgba(255,194,14,.35) 45%,rgba(26,163,245,0) 75%);pointer-events:none"></div>`;
-      }).join(''):''}
-      ${(heatViewMode!=='heat')?todosPontos.map(pt=>{
-        const p=toXY(pt.lat,pt.lng);
-        return `<div title="${pt.t} (${pt.local})" onclick="toast('${pt.t.replace(/'/g,"")} — ${pt.local}')" style="position:absolute;left:${p.x}%;top:${p.y}%;transform:translate(-50%,-50%);font-size:20px;cursor:pointer;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))">${catEmoji[pt.c]||'📍'}</div>`;
-      }).join(''):''}
-      <div style="position:absolute;bottom:8px;left:10px;background:rgba(255,255,255,.9);color:#0b1b3a;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600">Modo Offline · Centro de Aracaju/SE</div>
+      }).join('') : ''}
+      ${(heatViewMode !== 'heat') ? todosPontos.map(pt => {
+        const p = toXY(pt.lat, pt.lng);
+        return `<button type="button" data-offline-pin="${esc(pt.t)} — ${esc(pt.local)}" style="position:absolute;left:${p.x}%;top:${p.y}%;transform:translate(-50%,-50%);font-size:20px;background:none;border:0;padding:0;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))">${catEmoji[pt.c] || '📍'}</button>`;
+      }).join('') : ''}
+      <div style="position:absolute;bottom:8px;left:10px;background:rgba(255,255,255,.9);color:#0b1b3a;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600">Mapa Esquemático · Centro de Aracaju/SE</div>
     </div>`;
 }
 
-/* INICIALIZAÇÃO DO MAPA DE CALOR (CARTODB VOYAGER + LEAFLET.HEAT) */
+document.addEventListener('click', e => {
+  const pin = e.target.closest('[data-offline-pin]');
+  if(pin) toast(pin.dataset.offlinePin);
+});
+
+/* Inicialização do Mapa de Calor Leaflet */
 function initLeafletHeatMap(){
   const container = document.getElementById('leafletHeatMap');
   if(!container) return;
 
-  const ativos = O.filter(o => o.tipo === 'orgao').map(o => ({
+  const ativos = state.O.filter(o => o.tipo === 'orgao').map(o => ({
     lat: o.lat, lng: o.lng, c: o.c, t: `#${o.p} · ${o.t} (${o.s})`, local: o.l, status: o.s, peso: o.s === 'Resolvida' ? 0.5 : 1.0
   }));
   const todosPontos = [...ativos, ...HISTORICO_HEAT.map(h => ({...h, local: 'Centro, Aracaju', status: 'Histórico'}))]
@@ -1182,13 +2002,11 @@ function initLeafletHeatMap(){
   const centroAracaju = [-10.9115, -37.0510];
   heatMapInstance = L.map('leafletHeatMap', {scrollWheelZoom: false}).setView(centroAracaju, 16);
 
-  // Camada de mapa Geoapify (OSM Bright) usando sua API Key
   const geoapifyLayer = L.tileLayer(`https://maps.geoapify.com/v1/tile/osm-bright/{z}/{x}/{y}.png?apiKey=${GEOAPIFY_KEY}`, {
     maxZoom: 20,
     attribution: '&copy; OpenStreetMap &copy; Geoapify'
   });
   geoapifyLayer.on('tileerror', () => {
-    // Fallback automático caso ocorra falha de rede/cota
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       attribution: '&copy; OpenStreetMap &copy; CARTO'
@@ -1196,7 +2014,6 @@ function initLeafletHeatMap(){
   });
   geoapifyLayer.addTo(heatMapInstance);
 
-  // 1. Camada de Calor (Heatmap)
   if((heatViewMode === 'both' || heatViewMode === 'heat') && typeof L.heatLayer === 'function'){
     const heatCoords = todosPontos.map(pt => [pt.lat, pt.lng, pt.peso]);
     L.heatLayer(heatCoords, {
@@ -1207,7 +2024,6 @@ function initLeafletHeatMap(){
     }).addTo(heatMapInstance);
   }
 
-  // 2. Camada de Marcadores (Pins com popup)
   if(heatViewMode === 'both' || heatViewMode === 'pins'){
     const catEmoji = {'Via e calçada':'🚧','Iluminação':'💡','Limpeza urbana':'🧹','Segurança':'🚓'};
     todosPontos.forEach(pt => {
@@ -1219,151 +2035,249 @@ function initLeafletHeatMap(){
       });
       L.marker([pt.lat, pt.lng], {icon})
         .addTo(heatMapInstance)
-        .bindPopup(`<b>${pt.t}</b><br><small>Categoria: ${pt.c}</small><br><small>Local: ${pt.local}</small>`);
+        .bindPopup(`<b>${esc(pt.t)}</b><br><small>Categoria: ${esc(pt.c)}</small><br><small>Local: ${esc(pt.local)}</small>`);
     });
   }
 
-  // Recalcula as dimensões do container para evitar mapa cortado ou cinza
-  setTimeout(() => {
-    if(heatMapInstance) heatMapInstance.invalidateSize();
-  }, 250);
+  setTimeout(() => { if(heatMapInstance) heatMapInstance.invalidateSize(); }, 250);
 }
 
-/* EVENTOS INTERATIVOS DENTRO DO DASHBOARD */
-$('#side').onclick=e=>{
-  if(e.target.id==='logoutBtn'){
-    role=null;location.hash='#inicio';toast('Você saiu da sua conta.');return;
+/* Eventos dentro do Dashboard */
+$('#side').onclick = e => {
+  if(e.target.id === 'logoutBtn'){
+    state.role = null;
+    saveState();
+    location.hash = '#inicio';
+    toast('Você saiu da sua conta.');
+    return;
   }
-  const a=e.target.closest('a[data-p]');
-  if(a){e.preventDefault();curP=a.dataset.p;renderDashboard();}
+  const a = e.target.closest('a[data-p]');
+  if(a){
+    e.preventDefault();
+    state.curP = a.dataset.p;
+    saveState();
+    renderDashboard();
+  }
 };
 
-$('#dmain').onclick=e=>{
-  if(e.target.dataset.goto){curP=e.target.dataset.goto;renderDashboard();}
-  if(e.target.dataset.hcat){heatFilter=e.target.dataset.hcat;renderDashboard();}
-  if(e.target.dataset.hmode){heatViewMode=e.target.dataset.hmode;renderDashboard();}
-  if(e.target.dataset.eval!==undefined){
-    O[+e.target.dataset.eval].avaliado=true;
-    renderDashboard();toast('Obrigado! Sua avaliação foi registrada.');
+$('#dmain').onclick = e => {
+  if(e.target.dataset.goto){
+    state.curP = e.target.dataset.goto;
+    saveState();
+    renderDashboard();
+  }
+  if(e.target.dataset.hcat){
+    heatFilter = e.target.dataset.hcat;
+    renderDashboard();
+  }
+  if(e.target.dataset.hmode){
+    heatViewMode = e.target.dataset.hmode;
+    renderDashboard();
+  }
+  if(e.target.dataset.dst){
+    demandaStatusFilter = e.target.dataset.dst;
+    renderDashboard();
+  }
+  if(e.target.dataset.openEval !== undefined){
+    const idx = +e.target.dataset.openEval;
+    const item = state.O[idx];
+    let selectedStar = 5;
+    openModal(`Avaliar atendimento · #${item.p}`, `
+      <p class="sub" style="margin-bottom:8px">${esc(item.t)} (${esc(item.r)})</p>
+      <label>Sua nota</label>
+      <div class="stars-row" id="starPicker">
+        ${[1,2,3,4,5].map(n => `<button type="button" class="star-btn ${n === 5 ? 'on' : ''}" data-star="${n}">⭐ ${n}</button>`).join('')}
+      </div>
+      <label for="evalComment">Comentário (opcional)</label>
+      <textarea id="evalComment" rows="3" placeholder="Conte como foi a solução..."></textarea>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end;gap:8px">
+        <button type="button" class="btn g s" onclick="closeModal()">Cancelar</button>
+        <button type="button" class="btn y s" id="confirmEvalBtn">Enviar avaliação</button>
+      </div>
+    `);
+    $('#starPicker').onclick = ev => {
+      const b = ev.target.closest('[data-star]');
+      if(!b) return;
+      selectedStar = +b.dataset.star;
+      $$('#starPicker .star-btn').forEach(btn => btn.classList.toggle('on', +btn.dataset.star === selectedStar));
+    };
+    $('#confirmEvalBtn').onclick = () => {
+      state.O[idx].avaliado = true;
+      state.O[idx].nota = selectedStar;
+      state.O[idx].comentario = $('#evalComment').value.trim();
+      saveState();
+      closeModal();
+      renderDashboard();
+      toast('Obrigado! Avaliação de ' + selectedStar + '/5 registrada.');
+    };
   }
   if(e.target.dataset.copy){
-    navigator.clipboard&&navigator.clipboard.writeText(e.target.dataset.copy).catch(()=>{});
-    toast('Cupom '+e.target.dataset.copy+' copiado!');
+    navigator.clipboard && navigator.clipboard.writeText(e.target.dataset.copy).catch(()=>{});
+    toast('Cupom ' + e.target.dataset.copy + ' copiado!');
   }
-  if(e.target.id==='addProdBtn'){
-    const n=$('#np_nome').value.trim(),c=$('#np_cat').value,pr=parseFloat($('#np_preco').value),ic=$('#np_ico').value;
-    if(!n||!pr){toast('Preencha nome e preço do produto');return;}
-    P.unshift([n,c,pr,ic,'#eaf1fc',5.0,'Calçados Centro']);
-    prods();renderDashboard();toast('Produto publicado no Marketplace!');
+  if(e.target.dataset.removeCup){
+    const code = e.target.dataset.removeCup;
+    state.savedCoupons = state.savedCoupons.filter(c => c !== code);
+    saveState();
+    renderCups();
+    renderDashboard();
+    toast('Cupom ' + code + ' removido da carteira.');
   }
-  if(e.target.id==='addCupBtn'){
-    const cod=$('#nc_cod').value.trim().toUpperCase(),pct=$('#nc_pct').value.trim(),desc=$('#nc_desc').value.trim();
-    if(!cod||!pct||!desc){toast('Preencha todos os campos do cupom');return;}
-    D.unshift([pct,desc,cod,'#0f3a85','Calçados Centro']);
-    renderCups();renderDashboard();toast('Cupom '+cod+' publicado no Clube!');
+  if(e.target.id === 'saveProfileBtn'){
+    const nome = $('#pf_nome').value.trim();
+    const email = $('#pf_email').value.trim();
+    const bairro = $('#pf_bairro').value.trim();
+    if(!nome){ toast('Informe seu nome.'); return; }
+    state.cidadaoProfile = { nome, email, bairro };
+    saveState();
+    renderTopNav();
+    renderDashboard();
+    toast('Dados do perfil atualizados!');
   }
-  if(e.target.dataset.validateOrgao!==undefined){
-    const idx=+e.target.dataset.validateOrgao;
+  if(e.target.id === 'addProdBtn'){
+    const n = $('#np_nome').value.trim();
+    const c = $('#np_cat').value;
+    const pr = parseFloat($('#np_preco').value);
+    const ic = $('#np_ico').value;
+    if(!n || isNaN(pr) || pr <= 0){
+      toast('Preencha nome e preço válido do produto.');
+      return;
+    }
+    state.P.unshift([n, c, pr, ic, '#eaf1fc', 5.0, ACTIVE_STORE]);
+    saveState();
+    prods();
+    renderDashboard();
+    toast('Produto publicado no Marketplace!');
+  }
+  if(e.target.id === 'addCupBtn'){
+    const cod = $('#nc_cod').value.trim().toUpperCase();
+    const pct = $('#nc_pct').value.trim();
+    const desc = $('#nc_desc').value.trim();
+    if(!cod || !pct || !desc){
+      toast('Preencha todos os campos do cupom.');
+      return;
+    }
+    state.D.unshift([pct, desc, cod, '#0f3a85', ACTIVE_STORE]);
+    saveState();
+    renderCups();
+    renderDashboard();
+    toast('Cupom ' + cod + ' publicado no Clube!');
+  }
+  if(e.target.dataset.validateOrgao !== undefined){
+    const idx = +e.target.dataset.validateOrgao;
     if(validarDemandaOrgao(idx, false)){
-      occs();renderDashboard();
-      toast(`Demanda #${O[idx].p} validada! +${O[idx].coinsAmount||50} CentroCoins creditados ao cliente.`);
+      occs();
+      renderDashboard();
+      toast(`Demanda #${state.O[idx].p} validada! +${state.O[idx].coinsAmount || 50} CentroCoins creditados ao cliente.`);
     }
   }
-  if(e.target.dataset.redeemCoin!==undefined){
-    const rw = COIN_REWARDS.find(r=>r.id===e.target.dataset.redeemCoin);
+  if(e.target.dataset.redeemCoin !== undefined){
+    const rw = COIN_REWARDS.find(r => r.id === e.target.dataset.redeemCoin);
     if(!rw) return;
-    if(centroCoins < rw.custo){
+    if(state.centroCoins < rw.custo){
       toast(`Você precisa de ${rw.custo} CentroCoins para este resgate.`);
       return;
     }
-    centroCoins -= rw.custo;
-    if(!savedCoupons.includes(rw.code)){
-      savedCoupons.push(rw.code);
-      D.unshift([rw.pct, rw.titulo + ' (Resgate CentroCoins)', rw.code, rw.cor, rw.loja]);
+    state.centroCoins -= rw.custo;
+    if(!state.savedCoupons.includes(rw.code)){
+      state.savedCoupons.push(rw.code);
+      state.D.unshift([rw.pct, rw.titulo + ' (Resgate CentroCoins)', rw.code, rw.cor, rw.loja]);
       renderCups();
     }
-    coinHistory.unshift({
-      data: 'Agora',
+    state.coinHistory.unshift({
+      data: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
       desc: `Resgate: ${rw.titulo} (Cupom ${rw.code})`,
       delta: `-${rw.custo} CC`,
       tipo: 'resgate'
     });
+    saveState();
     renderDashboard();
     toast(`Cupom ${rw.code} resgatado e salvo em Meus Cupons!`);
   }
-  if(e.target.dataset.saveResp!==undefined){
-    const idx=+e.target.dataset.saveResp;
-    O[idx].resp=$('#resp_'+idx).value.trim();
-    occs();renderDashboard();toast('Resposta publicada para o cidadão!');
+  if(e.target.dataset.saveResp !== undefined){
+    const idx = +e.target.dataset.saveResp;
+    state.O[idx].resp = $('#resp_' + idx).value.trim();
+    saveState();
+    occs();
+    renderDashboard();
+    toast('Resposta publicada para o cidadão!');
   }
 };
 
-$('#dmain').onchange=e=>{
-  if(e.target.dataset.st!==undefined){
-    const idx=+e.target.dataset.st;
-    O[idx].s=e.target.value;
+$('#dmain').onchange = e => {
+  if(e.target.id === 'orgaoPeriodSel'){
+    orgaoPeriod = e.target.value;
+    renderDashboard();
+    return;
+  }
+  if(e.target.dataset.st !== undefined){
+    const idx = +e.target.dataset.st;
+    state.O[idx].s = e.target.value;
     let extraMsg = '';
-    if(O[idx].tipo==='orgao' && e.target.value==='Resolvida' && validarDemandaOrgao(idx, true)){
-      extraMsg = ` · Demanda validada (+${O[idx].coinsAmount||50} CentroCoins ao cidadão)!`;
+    if(state.O[idx].tipo === 'orgao' && e.target.value === 'Resolvida' && validarDemandaOrgao(idx, true)){
+      extraMsg = ` · Demanda validada (+${state.O[idx].coinsAmount || 50} CentroCoins ao cidadão)!`;
     }
-    occs();renderDashboard();toast('Status atualizado para: '+e.target.value + extraMsg);
+    saveState();
+    occs();
+    renderDashboard();
+    toast('Status atualizado para: ' + e.target.value + extraMsg);
   }
 };
 
-
+/* Drawer Mobile */
 function syncMobileDrawer(){
   const body = $('#drawerBody');
   if(!body) return;
   let items = '';
-  if(!role){
+  if(!state.role){
     items = `
       <a href="#inicio" data-v="inicio">🏠 Início</a>
       <a href="#lojas" data-v="lojas">🏪 Lojas</a>
       <a href="#reclame" data-v="reclame">⚠️ Ocorrências</a>
       <div class="drawer-sep"></div>
       <a href="#entrar" data-v="entrar">🔐 Entrar / Selecionar perfil</a>`;
-  }else if(role==='cidadao'){
-    const info = ROLES_INFO.cidadao;
+  }else if(state.role === 'cidadao'){
+    const info = getRoleInfo('cidadao');
     items = `
-      <div class="drawer-role-box">Perfil ativo<b>${info.icon} ${info.name}</b><span style="color:var(--navy);font-weight:700">🪙 ${centroCoins} CentroCoins</span></div>
+      <div class="drawer-role-box">Perfil ativo<b>${info.icon} ${esc(info.name)}</b><span style="color:var(--navy);font-weight:700">🪙 ${state.centroCoins} CentroCoins</span></div>
       <a href="#inicio" data-v="inicio">🏠 Início</a>
       <a href="#lojas" data-v="lojas">🏪 Marketplace</a>
       <a href="#descontos" data-v="descontos">🏷️ Clube de Descontos</a>
       <a href="#reclame" data-v="reclame">⚠️ Reclame Aqui</a>
       <div class="drawer-sep"></div>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="minhas_occ" class="${curP==='minhas_occ'?'on':''}">📋 Minhas Reclamações</a>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="centrocoins" class="${curP==='centrocoins'?'on':''}">🪙 CentroCoins (${centroCoins})</a>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="meus_cupons" class="${curP==='meus_cupons'?'on':''}">🎟️ Meus Cupons Salvos</a>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="perfil" class="${curP==='perfil'?'on':''}">👤 Meus Dados</a>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="minhas_occ" class="${state.curP === 'minhas_occ' ? 'on' : ''}">📋 Minhas Reclamações</a>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="centrocoins" class="${state.curP === 'centrocoins' ? 'on' : ''}">🪙 CentroCoins (${state.centroCoins})</a>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="meus_cupons" class="${state.curP === 'meus_cupons' ? 'on' : ''}">🎟️ Meus Cupons Salvos</a>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="perfil" class="${state.curP === 'perfil' ? 'on' : ''}">👤 Meus Dados</a>
       <div class="drawer-sep"></div>
       <a href="#entrar">🔄 Trocar perfil</a>
       <button type="button" class="d-item" id="drawerLogoutBtn" style="color:var(--red)">⏻ Sair da conta</button>`;
-  }else if(role==='lojista'){
-    const info = ROLES_INFO.lojista;
+  }else if(state.role === 'lojista'){
+    const info = getRoleInfo('lojista');
     items = `
-      <div class="drawer-role-box">Perfil ativo<b>${info.icon} ${info.name}</b></div>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="overview" class="${curP==='overview'?'on':''}">📊 Visão da Loja</a>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="produtos" class="${curP==='produtos'?'on':''}">📦 Meus Produtos</a>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="cupons" class="${curP==='cupons'?'on':''}">🏷️ Criar Cupons</a>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="sac" class="${curP==='sac'?'on':''}">💬 SAC / Reclamações</a>
+      <div class="drawer-role-box">Perfil ativo<b>${info.icon} ${esc(info.name)}</b></div>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="overview" class="${state.curP === 'overview' ? 'on' : ''}">📊 Visão da Loja</a>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="produtos" class="${state.curP === 'produtos' ? 'on' : ''}">📦 Meus Produtos</a>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="cupons" class="${state.curP === 'cupons' ? 'on' : ''}">🏷️ Criar Cupons</a>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="sac" class="${state.curP === 'sac' ? 'on' : ''}">💬 SAC / Reclamações</a>
       <div class="drawer-sep"></div>
       <a href="#lojas" data-v="lojas">🛍️ Ver Vitrine</a>
       <a href="#entrar">🔄 Trocar perfil</a>
       <button type="button" class="d-item" id="drawerLogoutBtn" style="color:var(--red)">⏻ Sair da conta</button>`;
-  }else if(role==='orgao'){
-    const info = ROLES_INFO.orgao;
+  }else if(state.role === 'orgao'){
+    const info = getRoleInfo('orgao');
     items = `
-      <div class="drawer-role-box">Perfil ativo<b>${info.icon} ${info.name}</b></div>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="overview" class="${curP==='overview'?'on':''}">📊 Dashboard Urbano</a>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="mapa" class="${curP==='mapa'?'on':''}">🔥 Mapa de Calor</a>
-      <a href="#dashboard" data-v="dashboard" data-dpanel="demandas" class="${curP==='demandas'?'on':''}">🚧 Demandas da Cidade</a>
+      <div class="drawer-role-box">Perfil ativo<b>${info.icon} ${esc(info.name)}</b></div>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="overview" class="${state.curP === 'overview' ? 'on' : ''}">📊 Dashboard Urbano</a>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="mapa" class="${state.curP === 'mapa' ? 'on' : ''}">🔥 Mapa de Calor</a>
+      <a href="#dashboard" data-v="dashboard" data-dpanel="demandas" class="${state.curP === 'demandas' ? 'on' : ''}">🚧 Demandas da Cidade</a>
       <div class="drawer-sep"></div>
       <a href="#entrar">🔄 Trocar perfil</a>
       <button type="button" class="d-item" id="drawerLogoutBtn" style="color:var(--red)">⏻ Sair da conta</button>`;
   }
   body.innerHTML = items;
-  const h = (location.hash||'#inicio').slice(1);
-  body.querySelectorAll('a[data-v]').forEach(a=>{
+  const h = (location.hash || '#inicio').slice(1);
+  body.querySelectorAll('a[data-v]').forEach(a => {
     if(!a.dataset.dpanel) a.classList.toggle('on', a.dataset.v === h);
   });
 }
@@ -1375,7 +2289,7 @@ function openDrawer(){
   const burger = $('#burgerBtn');
   if(!drawer || !backdrop) return;
   backdrop.hidden = false;
-  requestAnimationFrame(()=>drawer.classList.add('open'));
+  requestAnimationFrame(() => drawer.classList.add('open'));
   drawer.setAttribute('aria-hidden','false');
   if(burger) burger.setAttribute('aria-expanded','true');
   document.body.style.overflow = 'hidden';
@@ -1389,38 +2303,43 @@ function closeDrawer(){
   drawer.classList.remove('open');
   drawer.setAttribute('aria-hidden','true');
   if(burger) burger.setAttribute('aria-expanded','false');
-  document.body.style.overflow = '';
-  setTimeout(()=>{ if(!drawer.classList.contains('open')) backdrop.hidden = true; }, 240);
+  if($('#modalBackdrop').hidden) document.body.style.overflow = '';
+  setTimeout(() => { if(!drawer.classList.contains('open')) backdrop.hidden = true; }, 240);
 }
 
 $('#burgerBtn').onclick = openDrawer;
 $('#drawerClose').onclick = closeDrawer;
 $('#drawerBackdrop').onclick = closeDrawer;
-document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeDrawer(); });
-
-$('#drawerBody').onclick = e=>{
-  if(e.target.id==='drawerLogoutBtn'){
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    closeModal();
     closeDrawer();
-    role=null;location.hash='#inicio';toast('Você saiu da sua conta.');return;
+  }
+});
+
+$('#drawerBody').onclick = e => {
+  if(e.target.id === 'drawerLogoutBtn'){
+    closeDrawer();
+    state.role = null;
+    saveState();
+    location.hash = '#inicio';
+    toast('Você saiu da sua conta.');
+    return;
   }
   const a = e.target.closest('a');
   if(a){
     if(a.dataset.dpanel){
-      curP = a.dataset.dpanel;
-      if(location.hash==='#dashboard') renderDashboard();
+      state.curP = a.dataset.dpanel;
+      saveState();
+      if(location.hash === '#dashboard') renderDashboard();
     }
     closeDrawer();
   }
 };
 
-
 window.addEventListener('resize', () => {
-  if (typeof heatMapInstance !== 'undefined' && heatMapInstance) {
-    setTimeout(() => heatMapInstance.invalidateSize(), 150);
-  }
-  if (typeof clientMapInstance !== 'undefined' && clientMapInstance) {
-    setTimeout(() => clientMapInstance.invalidateSize(), 150);
-  }
+  if(heatMapInstance) setTimeout(() => heatMapInstance.invalidateSize(), 150);
+  if(clientMapInstance) setTimeout(() => clientMapInstance.invalidateSize(), 150);
 });
 
 route();
